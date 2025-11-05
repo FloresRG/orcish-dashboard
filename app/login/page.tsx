@@ -124,4 +124,8 @@ const Login2 = ({
   );
 };
 
-export default Login2;
+export default function LoginPage() {
+  return (
+    <Login2 />
+  );
+}
