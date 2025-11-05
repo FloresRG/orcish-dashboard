@@ -1,11 +1,14 @@
 "use client"
 
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import {
   IconCreditCard,
   IconDotsVertical,
   IconLogout,
   IconNotification,
   IconUserCircle,
+  IconCircleCheckFilled,
 } from "@tabler/icons-react"
 
 import {
@@ -28,6 +31,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { clearAuthData } from '@/lib/storage';
 
 export function NavUser({
   user,
@@ -36,9 +40,17 @@ export function NavUser({
     name: string
     email: string
     avatar: string
+    role?: string
   }
 }) {
   const { isMobile } = useSidebar()
+  const router = useRouter();
+
+  const handleLogout = () => {
+    // Clear auth data and redirect to home
+    clearAuthData();
+    router.push('/');
+  };
 
   return (
     <SidebarMenu>
@@ -58,6 +70,12 @@ export function NavUser({
                 <span className="text-muted-foreground truncate text-xs">
                   {user.email}
                 </span>
+                {user.role && (
+                  <div className="flex items-center gap-1 text-xs text-green-600">
+                    <IconCircleCheckFilled className="h-3 w-3 fill-green-500" />
+                    <span>Active - {user.role}</span>
+                  </div>
+                )}
               </div>
               <IconDotsVertical className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -79,6 +97,12 @@ export function NavUser({
                   <span className="text-muted-foreground truncate text-xs">
                     {user.email}
                   </span>
+                  {user.role && (
+                    <div className="flex items-center gap-1 text-xs text-green-600">
+                      <IconCircleCheckFilled className="h-3 w-3 fill-green-500" />
+                      <span>Active - {user.role}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -98,7 +122,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <IconLogout />
               Log out
             </DropdownMenuItem>
