@@ -163,7 +163,7 @@ export function AppSidebar({ user, ...props }: React.ComponentProps<typeof Sideb
               <a href="#">
                 <IconInnerShadowTop className="!size-5" />
                 <span className="text-base font-semibold">
-                  Orcish Dashboard
+                  POSGRADING
                 </span>
               </a>
             </SidebarMenuButton>
