@@ -173,6 +173,11 @@ const getNavigationData = (userRole?: UserRole) => {
             url: "/whatsapp",
             icon: IconFileAi, // You can change this to a WhatsApp icon if available
           },
+           {
+            title: "Mensajes",
+            url: "/Mensajes",
+            icon: IconFileAi, // You can change this to a WhatsApp icon if available
+          },
         ],
         navClouds: [],
         documents: [],
