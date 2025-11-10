@@ -26,9 +26,21 @@ export default function Home() {
     const timer = setTimeout(() => {
       setLoading(false);
 
-      // If user is authenticated, redirect to dashboard
+      // If user is authenticated, redirect to role-specific dashboard
       if (storedUser) {
-        router.replace('/dashboard');
+        switch (storedUser.role) {
+          case 'admin':
+            router.replace('/admin/dashboard');
+            break;
+          case 'usuario':
+            router.replace('/dashboard');
+            break;
+          case 'invitado':
+            router.replace('/guest/courses');
+            break;
+          default:
+            router.replace('/dashboard');
+        }
       }
     }, 100);
 

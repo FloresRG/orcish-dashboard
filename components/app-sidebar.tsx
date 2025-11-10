@@ -17,9 +17,15 @@ import {
   IconSearch,
   IconSettings,
   IconUsers,
+  IconUser,
+  IconMessage,
+  IconPhone,
+  IconBook,
+  IconRobot,
+  IconChartLine,
+  IconDatabase as IconDB,
 } from "@tabler/icons-react";
 
-import { NavDocuments } from "@/components/nav-documents";
 import { NavMain } from "@/components/nav-main";
 import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
@@ -42,23 +48,7 @@ const getNavigationData = (userRole?: UserRole) => {
       email: "m@example.com",
       avatar: "/avatars/shadcn.jpg",
     },
-    navSecondary: [
-      {
-        title: "Settings",
-        url: "#",
-        icon: IconSettings,
-      },
-      {
-        title: "Get Help",
-        url: "#",
-        icon: IconHelp,
-      },
-      {
-        title: "Search",
-        url: "#",
-        icon: IconSearch,
-      },
-    ],
+    navSecondary: [],
   };
 
   switch (userRole) {
@@ -68,95 +58,52 @@ const getNavigationData = (userRole?: UserRole) => {
         navMain: [
           {
             title: "Dashboard",
-            url: "#",
+            url: "/admin/dashboard",
             icon: IconDashboard,
           },
           {
-            title: "Lifecycle",
-            url: "#",
-            icon: IconListDetails,
+            title: "Users",
+            url: "/admin/users",
+            icon: IconUser,
+          },
+          {
+            title: "WhatsApp",
+            url: "/admin/whatsapp",
+            icon: IconPhone,
+          },
+          {
+            title: "Contacts",
+            url: "/admin/contacts",
+            icon: IconMessage,
+          },
+          {
+            title: "Mensajes",
+            url: "/Mensajes",
+            icon: IconMessage,
+          },
+          {
+            title: "Courses",
+            url: "/admin/courses",
+            icon: IconBook,
+          },
+          {
+            title: "Aprendizaje",
+            url: "/admin/learning",
+            icon: IconFileAi,
+          },
+          {
+            title: "AI System",
+            url: "/admin/ai",
+            icon: IconRobot,
           },
           {
             title: "Analytics",
-            url: "#",
-            icon: IconChartBar,
-          },
-          {
-            title: "Projects",
-            url: "#",
-            icon: IconFolder,
-          },
-          {
-            title: "Team",
-            url: "#",
-            icon: IconUsers,
+            url: "/admin/analytics",
+            icon: IconChartLine,
           },
         ],
-        navClouds: [
-          {
-            title: "Capture",
-            icon: IconCamera,
-            isActive: true,
-            url: "#",
-            items: [
-              {
-                title: "Active Proposals",
-                url: "#",
-              },
-              {
-                title: "Archived",
-                url: "#",
-              },
-            ],
-          },
-          {
-            title: "Proposal",
-            icon: IconFileDescription,
-            url: "#",
-            items: [
-              {
-                title: "Active Proposals",
-                url: "#",
-              },
-              {
-                title: "Archived",
-                url: "#",
-              },
-            ],
-          },
-          {
-            title: "Prompts",
-            icon: IconFileAi,
-            url: "#",
-            items: [
-              {
-                title: "Active Proposals",
-                url: "#",
-              },
-              {
-                title: "Archived",
-                url: "#",
-              },
-            ],
-          },
-        ],
-        documents: [
-          {
-            name: "Data Library",
-            url: "#",
-            icon: IconDatabase,
-          },
-          {
-            name: "Reports",
-            url: "#",
-            icon: IconReport,
-          },
-          {
-            name: "Word Assistant",
-            url: "#",
-            icon: IconFileWord,
-          },
-        ],
+        navClouds: [],
+        documents: [],
       };
 
     case UserRole.USER:
@@ -165,18 +112,28 @@ const getNavigationData = (userRole?: UserRole) => {
         navMain: [
           {
             title: "Dashboard",
-            url: "#",
+            url: "/dashboard",
             icon: IconDashboard,
           },
           {
             title: "WhatsApp",
             url: "/whatsapp",
-            icon: IconFileAi, // You can change this to a WhatsApp icon if available
+            icon: IconPhone,
           },
-           {
+          {
             title: "Mensajes",
             url: "/Mensajes",
-            icon: IconFileAi, // You can change this to a WhatsApp icon if available
+            icon: IconMessage,
+          },
+          {
+            title: "Cursos",
+            url: "/user/courses",
+            icon: IconBook,
+          },
+          {
+            title: "Aprendizaje",
+            url: "/user/learning",
+            icon: IconFileAi,
           },
         ],
         navClouds: [],
@@ -187,7 +144,18 @@ const getNavigationData = (userRole?: UserRole) => {
     default:
       return {
         ...baseData,
-        navMain: [],
+        navMain: [
+          {
+            title: "Cursos",
+            url: "/guest/courses",
+            icon: IconBook,
+          },
+          {
+            title: "Consultar IA",
+            url: "/guest/ai",
+            icon: IconRobot,
+          },
+        ],
         navClouds: [],
         documents: [],
       };
@@ -218,7 +186,6 @@ export function AppSidebar({ user, ...props }: React.ComponentProps<typeof Sideb
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

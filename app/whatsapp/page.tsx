@@ -316,9 +316,53 @@ export default function WhatsAppPage() {
     );
   }
 
-  // GUEST users are redirected in useEffect
+  // GUEST users get access denied message
   if (user.role === UserRole.GUEST) {
-    return null;
+    return (
+      <SidebarProvider
+        style={{
+          "--sidebar-width": "calc(var(--spacing) * 72)",
+          "--header-height": "calc(var(--spacing) * 12)",
+        } as React.CSSProperties}
+      >
+        <AppSidebar user={user} />
+        <SidebarInset>
+          <SiteHeader />
+          <div className="flex flex-1 flex-col">
+            <div className="@container/main flex flex-1 flex-col gap-2">
+              <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+                <div className="px-4 lg:px-6">
+                  <Card className="max-w-2xl mx-auto">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Phone className="h-5 w-5" />
+                        WhatsApp Access Restricted
+                      </CardTitle>
+                      <CardDescription>
+                        WhatsApp features are not available for guest users
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-center py-8">
+                        <Phone className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                        <h3 className="text-lg font-medium mb-2">Access Denied</h3>
+                        <p className="text-muted-foreground mb-4">
+                          As a guest user, you don't have access to WhatsApp functionality.
+                          Please register as a regular user to access WhatsApp features.
+                        </p>
+                        <Button onClick={() => router.push('/login')}>
+                          Register / Login
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            </div>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    );
   }
 
   return (
@@ -337,7 +381,7 @@ export default function WhatsAppPage() {
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
               <div className="px-4 lg:px-6">
-                {/* USER role: Show session management or creation */}
+                {/* USER role: Show session management or creation (Max 1 session) */}
                 {user.role === UserRole.USER && (
                   <>
                     {sessions.length === 0 || showCreateForm ? (
@@ -413,7 +457,7 @@ function renderUserSessionManagement(
       <div className="mb-6">
         <h1 className="text-3xl font-bold">WhatsApp Session</h1>
         <p className="text-muted-foreground">
-          Manage your WhatsApp Business session
+          Manage your WhatsApp Business session (User Access - Max 1 Session)
         </p>
       </div>
 
@@ -658,7 +702,7 @@ function renderAdminSessionManagement(
       <div className="mb-6">
         <h1 className="text-3xl font-bold">WhatsApp Sessions</h1>
         <p className="text-muted-foreground">
-          Manage multiple WhatsApp Business sessions
+          Manage multiple WhatsApp Business sessions (Admin Access - Unlimited)
         </p>
       </div>
 
