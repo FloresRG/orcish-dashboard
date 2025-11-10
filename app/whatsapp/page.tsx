@@ -1,48 +1,91 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { toast } from 'sonner';
-import { createWhatsAppSession, getQRCode, getSessionStatus, getWhatsAppSessions, SessionStatus, WhatsAppSession, updateAutoResponse, toggleAutoResponse, getAutoResponseStats, AutoResponseConfig, deleteWhatsAppSession, testAutoResponse } from '@/lib/whatsapp';
-import { ArrowLeft, QrCode, CheckCircle, Loader2, Plus, Settings, BarChart3, MessageSquare, Users, Phone } from 'lucide-react';
-import { UserRole } from '@/types/auth';
-import { getAuthData } from '@/lib/storage';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "sonner";
+import {
+  createWhatsAppSession,
+  getQRCode,
+  getSessionStatus,
+  getWhatsAppSessions,
+  SessionStatus,
+  WhatsAppSession,
+  updateAutoResponse,
+  toggleAutoResponse,
+  getAutoResponseStats,
+  AutoResponseConfig,
+  deleteWhatsAppSession,
+  testAutoResponse,
+} from "@/lib/whatsapp";
+import {
+  ArrowLeft,
+  QrCode,
+  CheckCircle,
+  Loader2,
+  Plus,
+  Settings,
+  BarChart3,
+  MessageSquare,
+  Users,
+  Phone,
+} from "lucide-react";
+import { UserRole } from "@/types/auth";
+import { getAuthData } from "@/lib/storage";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
-type Step = 'phone' | 'qr' | 'verify';
+type Step = "phone" | "qr" | "verify";
 
 export default function WhatsAppPage() {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState<Step>('phone');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [sessionId, setSessionId] = useState<string>('');
-  const [qrCode, setQrCode] = useState<string>('');
+  const [currentStep, setCurrentStep] = useState<Step>("phone");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [sessionId, setSessionId] = useState<string>("");
+  const [qrCode, setQrCode] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [verifying, setVerifying] = useState(false);
-  const [user, setUser] = useState<{ name: string; email: string; role: UserRole } | null>(null);
+  const [user, setUser] = useState<{
+    name: string;
+    email: string;
+    role: UserRole;
+  } | null>(null);
   const [sessions, setSessions] = useState<WhatsAppSession[]>([]);
-  const [selectedSession, setSelectedSession] = useState<WhatsAppSession | null>(null);
+  const [selectedSession, setSelectedSession] =
+    useState<WhatsAppSession | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [testPhoneNumber, setTestPhoneNumber] = useState('');
-  const [autoResponseConfig, setAutoResponseConfig] = useState<AutoResponseConfig>({
-    privateMessage: '🤖 Estás hablando con PosGrading - Sistema automatizado',
-    groupMessage: '🤖 Estás hablando con PosGrading en un grupo - Sistema automatizado',
-    enabled: true
-  });
+  const [testPhoneNumber, setTestPhoneNumber] = useState("");
+  const [autoResponseConfig, setAutoResponseConfig] =
+    useState<AutoResponseConfig>({
+      privateMessage: "🤖 Estás hablando con PosGrading - Sistema automatizado",
+      groupMessage:
+        "🤖 Estás hablando con PosGrading en un grupo - Sistema automatizado",
+      enabled: true,
+    });
 
   // Load user data and sessions on mount
   useEffect(() => {
     const { user: storedUser } = getAuthData();
-    console.log('User data:', storedUser);
+    console.log("User data:", storedUser);
     setUser(storedUser);
 
     if (storedUser) {
@@ -52,13 +95,13 @@ export default function WhatsAppPage() {
 
   const loadSessions = async () => {
     try {
-      console.log('Loading sessions...');
+      console.log("Loading sessions...");
       const sessionsData = await getWhatsAppSessions();
-      console.log('Sessions loaded:', sessionsData);
+      console.log("Sessions loaded:", sessionsData);
       setSessions(sessionsData);
     } catch (error) {
-      console.error('Error loading sessions:', error);
-      toast.error('Failed to load sessions');
+      console.error("Error loading sessions:", error);
+      toast.error("Failed to load sessions");
     }
   };
 
@@ -68,14 +111,14 @@ export default function WhatsAppPage() {
 
     setLoading(true);
     try {
-      console.log('Creating WhatsApp session for phone:', phoneNumber);
+      console.log("Creating WhatsApp session for phone:", phoneNumber);
       const response = await createWhatsAppSession(phoneNumber);
-      console.log('Session created:', response);
+      console.log("Session created:", response);
       setSessionId(response.sessionId);
-      setCurrentStep('qr');
-      toast.success('Session created successfully!');
+      setCurrentStep("qr");
+      toast.success("Session created successfully!");
     } catch (error) {
-      console.error('Error creating session:', error);
+      console.error("Error creating session:", error);
       toast.error((error as Error).message);
     } finally {
       setLoading(false);
@@ -87,13 +130,13 @@ export default function WhatsAppPage() {
 
     setLoading(true);
     try {
-      console.log('Getting QR code for session:', sessionId);
+      console.log("Getting QR code for session:", sessionId);
       const response = await getQRCode(sessionId);
-      console.log('QR code response:', response);
+      console.log("QR code response:", response);
       setQrCode(response.qrCode);
-      toast.success('QR code generated!');
+      toast.success("QR code generated!");
     } catch (error) {
-      console.error('Error getting QR code:', error);
+      console.error("Error getting QR code:", error);
       toast.error((error as Error).message);
     } finally {
       setLoading(false);
@@ -105,25 +148,25 @@ export default function WhatsAppPage() {
 
     setVerifying(true);
     try {
-      console.log('Verifying session status for:', sessionId);
+      console.log("Verifying session status for:", sessionId);
       const response = await getSessionStatus(sessionId);
-      console.log('Session status response:', response);
+      console.log("Session status response:", response);
       if (response.status === SessionStatus.CONNECTED) {
-        setCurrentStep('verify');
-        toast.success('WhatsApp connected successfully!');
+        setCurrentStep("verify");
+        toast.success("WhatsApp connected successfully!");
         // Reload sessions after successful connection
         setTimeout(() => {
           loadSessions();
-          setCurrentStep('phone');
-          setPhoneNumber('');
-          setSessionId('');
-          setQrCode('');
+          setCurrentStep("phone");
+          setPhoneNumber("");
+          setSessionId("");
+          setQrCode("");
         }, 2000);
       } else {
         toast.info(`Status: ${response.status}`);
       }
     } catch (error) {
-      console.error('Error verifying session status:', error);
+      console.error("Error verifying session status:", error);
       toast.error((error as Error).message);
     } finally {
       setVerifying(false);
@@ -136,7 +179,7 @@ export default function WhatsAppPage() {
         <CardTitle className="flex items-center gap-2">
           <ArrowLeft
             className="h-5 w-5 cursor-pointer"
-            onClick={() => router.push('/dashboard')}
+            onClick={() => router.push("/dashboard")}
           />
           Connect WhatsApp
         </CardTitle>
@@ -164,7 +207,7 @@ export default function WhatsAppPage() {
                 Creating Session...
               </>
             ) : (
-              'Continue'
+              "Continue"
             )}
           </Button>
         </form>
@@ -178,7 +221,7 @@ export default function WhatsAppPage() {
         <CardTitle className="flex items-center gap-2">
           <ArrowLeft
             className="h-5 w-5 cursor-pointer"
-            onClick={() => setCurrentStep('phone')}
+            onClick={() => setCurrentStep("phone")}
           />
           Scan QR Code
         </CardTitle>
@@ -207,9 +250,15 @@ export default function WhatsAppPage() {
           <div className="space-y-4">
             <div className="flex justify-center">
               <img
-                src={qrCode}
+                src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/${qrCode}`}
                 alt="WhatsApp QR Code"
                 className="max-w-full h-auto border rounded-lg"
+                onError={(e) => {
+                  console.error("Failed to load QR image:", e);
+                  toast.error(
+                    "Failed to load QR code image. Check console for details."
+                  );
+                }}
               />
             </div>
             <Button
@@ -243,7 +292,8 @@ export default function WhatsAppPage() {
           WhatsApp Connected!
         </CardTitle>
         <CardDescription>
-          Your WhatsApp session has been successfully connected. Redirecting to dashboard...
+          Your WhatsApp session has been successfully connected. Redirecting to
+          dashboard...
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -293,13 +343,21 @@ export default function WhatsAppPage() {
                     {sessions.length === 0 || showCreateForm ? (
                       // Show creation form
                       <div className="flex items-center justify-center p-4">
-                        {currentStep === 'phone' && renderPhoneStep()}
-                        {currentStep === 'qr' && renderQRStep()}
-                        {currentStep === 'verify' && renderVerifyStep()}
+                        {currentStep === "phone" && renderPhoneStep()}
+                        {currentStep === "qr" && renderQRStep()}
+                        {currentStep === "verify" && renderVerifyStep()}
                       </div>
                     ) : (
                       // Show session management for existing session
-                      renderUserSessionManagement(sessions, setShowCreateForm, autoResponseConfig, setAutoResponseConfig, testPhoneNumber, setTestPhoneNumber, loadSessions)
+                      renderUserSessionManagement(
+                        sessions,
+                        setShowCreateForm,
+                        autoResponseConfig,
+                        setAutoResponseConfig,
+                        testPhoneNumber,
+                        setTestPhoneNumber,
+                        loadSessions
+                      )
                     )}
                   </>
                 )}
@@ -309,9 +367,9 @@ export default function WhatsAppPage() {
                   <>
                     {showCreateForm ? (
                       <div className="flex items-center justify-center p-4">
-                        {currentStep === 'phone' && renderPhoneStep()}
-                        {currentStep === 'qr' && renderQRStep()}
-                        {currentStep === 'verify' && renderVerifyStep()}
+                        {currentStep === "phone" && renderPhoneStep()}
+                        {currentStep === "qr" && renderQRStep()}
+                        {currentStep === "verify" && renderVerifyStep()}
                       </div>
                     ) : (
                       renderAdminSessionManagement(sessions, setShowCreateForm)
@@ -327,7 +385,15 @@ export default function WhatsAppPage() {
   );
 }
 
-function renderUserSessionManagement(sessions: WhatsAppSession[], setShowCreateForm: (show: boolean) => void, autoResponseConfig: AutoResponseConfig, setAutoResponseConfig: (config: AutoResponseConfig) => void, testPhoneNumber: string, setTestPhoneNumber: (phone: string) => void, loadSessions: () => void) {
+function renderUserSessionManagement(
+  sessions: WhatsAppSession[],
+  setShowCreateForm: (show: boolean) => void,
+  autoResponseConfig: AutoResponseConfig,
+  setAutoResponseConfig: (config: AutoResponseConfig) => void,
+  testPhoneNumber: string,
+  setTestPhoneNumber: (phone: string) => void,
+  loadSessions: () => void
+) {
   const session = sessions[0]; // USER has only one session
 
   if (!session) {
@@ -346,7 +412,9 @@ function renderUserSessionManagement(sessions: WhatsAppSession[], setShowCreateF
     <div className="max-w-4xl mx-auto">
       <div className="mb-6">
         <h1 className="text-3xl font-bold">WhatsApp Session</h1>
-        <p className="text-muted-foreground">Manage your WhatsApp Business session</p>
+        <p className="text-muted-foreground">
+          Manage your WhatsApp Business session
+        </p>
       </div>
 
       <div className="grid gap-6">
@@ -357,18 +425,23 @@ function renderUserSessionManagement(sessions: WhatsAppSession[], setShowCreateF
               <Phone className="h-5 w-5" />
               Session Status
             </CardTitle>
-            <CardDescription>
-              Phone: {session?.phoneNumber}
-            </CardDescription>
+            <CardDescription>Phone: {session?.phoneNumber}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
-              <Badge variant={session?.status === SessionStatus.CONNECTED ? "default" : "secondary"}>
-                {session?.status || 'Unknown'}
+              <Badge
+                variant={
+                  session?.status === SessionStatus.CONNECTED
+                    ? "default"
+                    : "secondary"
+                }
+              >
+                {session?.status || "Unknown"}
               </Badge>
               {session?.lastConnection && (
                 <span className="text-sm text-muted-foreground">
-                  Last connected: {new Date(session.lastConnection).toLocaleString()}
+                  Last connected:{" "}
+                  {new Date(session.lastConnection).toLocaleString()}
                 </span>
               )}
             </div>
@@ -392,9 +465,12 @@ function renderUserSessionManagement(sessions: WhatsAppSession[], setShowCreateF
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => session && toggleAutoResponse(session.id, !session.autoResponseEnabled)}
+                onClick={() =>
+                  session &&
+                  toggleAutoResponse(session.id, !session.autoResponseEnabled)
+                }
               >
-                {session?.autoResponseEnabled ? 'Disable' : 'Enable'}
+                {session?.autoResponseEnabled ? "Disable" : "Enable"}
               </Button>
             </div>
 
@@ -405,7 +481,12 @@ function renderUserSessionManagement(sessions: WhatsAppSession[], setShowCreateF
                 <Label>Private Chat Message</Label>
                 <Input
                   value={autoResponseConfig.privateMessage}
-                  onChange={(e) => setAutoResponseConfig({ ...autoResponseConfig, privateMessage: e.target.value })}
+                  onChange={(e) =>
+                    setAutoResponseConfig({
+                      ...autoResponseConfig,
+                      privateMessage: e.target.value,
+                    })
+                  }
                   placeholder="Message for private chats"
                 />
               </div>
@@ -413,12 +494,19 @@ function renderUserSessionManagement(sessions: WhatsAppSession[], setShowCreateF
                 <Label>Group Chat Message</Label>
                 <Input
                   value={autoResponseConfig.groupMessage}
-                  onChange={(e) => setAutoResponseConfig({ ...autoResponseConfig, groupMessage: e.target.value })}
+                  onChange={(e) =>
+                    setAutoResponseConfig({
+                      ...autoResponseConfig,
+                      groupMessage: e.target.value,
+                    })
+                  }
                   placeholder="Message for group chats"
                 />
               </div>
               <Button
-                onClick={() => session && updateAutoResponse(session.id, autoResponseConfig)}
+                onClick={() =>
+                  session && updateAutoResponse(session.id, autoResponseConfig)
+                }
                 className="w-full"
               >
                 <Settings className="h-4 w-4 mr-2" />
@@ -442,20 +530,36 @@ function renderUserSessionManagement(sessions: WhatsAppSession[], setShowCreateF
           <CardContent>
             <div className="grid grid-cols-2 gap-4">
               <div className="text-center">
-                <div className="text-2xl font-bold">{session?.totalMessagesSent || 0}</div>
-                <div className="text-sm text-muted-foreground">Total Messages</div>
+                <div className="text-2xl font-bold">
+                  {session?.totalMessagesSent || 0}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Total Messages
+                </div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold">{session?.privateMessagesSent || 0}</div>
-                <div className="text-sm text-muted-foreground">Private Messages</div>
+                <div className="text-2xl font-bold">
+                  {session?.privateMessagesSent || 0}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Private Messages
+                </div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold">{session?.groupMessagesSent || 0}</div>
-                <div className="text-sm text-muted-foreground">Group Messages</div>
+                <div className="text-2xl font-bold">
+                  {session?.groupMessagesSent || 0}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Group Messages
+                </div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold">{session?.lastAutoResponseAt ? 'Active' : 'Inactive'}</div>
-                <div className="text-sm text-muted-foreground">Auto-Response</div>
+                <div className="text-2xl font-bold">
+                  {session?.lastAutoResponseAt ? "Active" : "Inactive"}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Auto-Response
+                </div>
               </div>
             </div>
           </CardContent>
@@ -496,7 +600,10 @@ function renderUserSessionManagement(sessions: WhatsAppSession[], setShowCreateF
               </div>
             </div>
             <Button
-              onClick={() => session && testAutoResponse(session.id, testPhoneNumber, 'private')}
+              onClick={() =>
+                session &&
+                testAutoResponse(session.id, testPhoneNumber, "private")
+              }
               className="w-full"
             >
               Send Test Message
@@ -517,10 +624,14 @@ function renderUserSessionManagement(sessions: WhatsAppSession[], setShowCreateF
               variant="destructive"
               onClick={async () => {
                 if (!session) return;
-                if (confirm('Are you sure you want to delete this WhatsApp session? This action cannot be undone.')) {
+                if (
+                  confirm(
+                    "Are you sure you want to delete this WhatsApp session? This action cannot be undone."
+                  )
+                ) {
                   try {
                     await deleteWhatsAppSession(session.id);
-                    toast.success('Session deleted successfully');
+                    toast.success("Session deleted successfully");
                     // Reload sessions
                     loadSessions();
                   } catch (error) {
@@ -538,12 +649,17 @@ function renderUserSessionManagement(sessions: WhatsAppSession[], setShowCreateF
   );
 }
 
-function renderAdminSessionManagement(sessions: WhatsAppSession[], setShowCreateForm: (show: boolean) => void) {
+function renderAdminSessionManagement(
+  sessions: WhatsAppSession[],
+  setShowCreateForm: (show: boolean) => void
+) {
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-6">
         <h1 className="text-3xl font-bold">WhatsApp Sessions</h1>
-        <p className="text-muted-foreground">Manage multiple WhatsApp Business sessions</p>
+        <p className="text-muted-foreground">
+          Manage multiple WhatsApp Business sessions
+        </p>
       </div>
 
       <div className="grid gap-6">
@@ -557,7 +673,9 @@ function renderAdminSessionManagement(sessions: WhatsAppSession[], setShowCreate
                 New Session
               </Button>
             </CardTitle>
-            <CardDescription>Add a new WhatsApp Business session</CardDescription>
+            <CardDescription>
+              Add a new WhatsApp Business session
+            </CardDescription>
           </CardHeader>
         </Card>
 
@@ -565,14 +683,19 @@ function renderAdminSessionManagement(sessions: WhatsAppSession[], setShowCreate
         <Card>
           <CardHeader>
             <CardTitle>All Sessions ({sessions.length})</CardTitle>
-            <CardDescription>Manage your WhatsApp Business sessions</CardDescription>
+            <CardDescription>
+              Manage your WhatsApp Business sessions
+            </CardDescription>
           </CardHeader>
           <CardContent>
             {sessions.length === 0 ? (
               <div className="text-center py-8">
                 <Phone className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                 <p className="text-muted-foreground">No sessions created yet</p>
-                <Button className="mt-4" onClick={() => setShowCreateForm(true)}>
+                <Button
+                  className="mt-4"
+                  onClick={() => setShowCreateForm(true)}
+                >
                   <Plus className="h-4 w-4 mr-2" />
                   Create Your First Session
                 </Button>
@@ -585,12 +708,21 @@ function renderAdminSessionManagement(sessions: WhatsAppSession[], setShowCreate
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                           <div>
-                            <div className="font-medium">{session.phoneNumber}</div>
+                            <div className="font-medium">
+                              {session.phoneNumber}
+                            </div>
                             <div className="text-sm text-muted-foreground">
-                              Created: {new Date(session.createdAt).toLocaleDateString()}
+                              Created:{" "}
+                              {new Date(session.createdAt).toLocaleDateString()}
                             </div>
                           </div>
-                          <Badge variant={session.status === SessionStatus.CONNECTED ? "default" : "secondary"}>
+                          <Badge
+                            variant={
+                              session.status === SessionStatus.CONNECTED
+                                ? "default"
+                                : "secondary"
+                            }
+                          >
                             {session.status}
                           </Badge>
                         </div>
@@ -605,7 +737,8 @@ function renderAdminSessionManagement(sessions: WhatsAppSession[], setShowCreate
                       </div>
                       {session.lastConnection && (
                         <div className="mt-2 text-sm text-muted-foreground">
-                          Last connected: {new Date(session.lastConnection).toLocaleString()}
+                          Last connected:{" "}
+                          {new Date(session.lastConnection).toLocaleString()}
                         </div>
                       )}
                     </CardContent>

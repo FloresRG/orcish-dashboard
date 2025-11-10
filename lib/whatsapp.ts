@@ -115,24 +115,6 @@ export const getSessionStatus = async (sessionId: string): Promise<SessionStatus
   return res.json();
 };
 
-export const getWhatsAppSessions = async (): Promise<WhatsAppSession[]> => {
-  const token = localStorage.getItem('auth_token');
-  if (!token) throw new Error('No authentication token found');
-
-  const res = await fetch(`${API_BASE_URL}/api/v1/whatsapp/sessions`, {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    },
-  });
-
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(`Error ${res.status}: ${errorText}`);
-  }
-
-  return res.json();
-};
 
 export interface AutoResponseConfig {
   privateMessage: string;
@@ -261,4 +243,30 @@ export const testAutoResponse = async (sessionId: string, phoneNumber: string, m
     const errorText = await res.text();
     throw new Error(`Error ${res.status}: ${errorText}`);
   }
+};
+
+export const getWhatsAppSessions = async (): Promise<WhatsAppSession[]> => {
+  const token = localStorage.getItem('auth_token');
+  if (!token) throw new Error('No authentication token found');
+
+  console.log('📱 Loading WhatsApp sessions');
+
+  const res = await fetch(`${API_BASE_URL}/api/v1/whatsapp/sessions`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  console.log('📡 Sessions API response status:', res.status);
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error('❌ Sessions API error:', errorText);
+    throw new Error(`Error ${res.status}: ${errorText}`);
+  }
+
+  const data = await res.json();
+  console.log('✅ WhatsApp sessions loaded:', data.length || 0, 'sessions');
+  return data;
 };

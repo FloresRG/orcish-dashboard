@@ -4,17 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { User, Phone, Mail, Calendar, Clock, ShieldCheck, Trash2, Archive, Volume2, Bell } from "lucide-react";
+import { User, Mail, Calendar, Clock, ShieldCheck, Trash2, Archive, Volume2 } from "lucide-react";
 
 interface ContactSettingsSidebarProps {
-  isOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
   isMobile?: boolean;
 }
 
 export function ContactSettingsSidebar({
-  isOpen = true,
-  onOpenChange,
   isMobile = false,
 }: ContactSettingsSidebarProps) {
   const contact = {
@@ -83,20 +79,11 @@ export function ContactSettingsSidebar({
   );
 
   if (isMobile) {
-    const { Sheet, SheetContent, SheetTrigger } = require("@/components/ui/sheet").default || require("@/components/ui/sheet");
-    const { Bell } = require("lucide-react");
-
     return (
-      <Sheet open={isOpen} onOpenChange={onOpenChange}>
-        <SheetTrigger asChild>
-          <Button variant="ghost" size="icon">
-            <Bell className="h-5 w-5" />
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="right" className="w-[300px] sm:w-[350px] p-0">
-          {desktopContent}
-        </SheetContent>
-      </Sheet>
+      <div className="hidden">
+        {/* Mobile contact settings - placeholder for now */}
+        {desktopContent}
+      </div>
     );
   }
 

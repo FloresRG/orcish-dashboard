@@ -10,35 +10,80 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import Link from "next/link";
-import { MoreVertical } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { useContacts } from "@/hooks/useContacts";
+import { Contact } from "@/lib/conect-front";
 
 interface ChatSidebarProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
+  onContactSelect: (contact: Contact) => void;
+  selectedContactId: string | null;
+  sessionId?: string | null;
 }
 
-export function ChatSidebar({ searchTerm, onSearchChange }: ChatSidebarProps) {
+export function ChatSidebar({
+  searchTerm,
+  onSearchChange,
+  onContactSelect,
+  selectedContactId,
+  sessionId
+}: ChatSidebarProps) {
+  const {
+    contacts,
+    loading,
+    error,
+    loadMoreContacts,
+    searchContacts
+  } = useContacts(sessionId || null);
+
+
+  const handleSearchChange = (value: string) => {
+    console.log('🔍 ChatSidebar: Search term changed:', value);
+    onSearchChange(value);
+    searchContacts(value);
+  };
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    const nearBottom = scrollTop + clientHeight >= scrollHeight - 100;
+
+    if (nearBottom && !loading) {
+      loadMoreContacts();
+    }
+  };
+
+  const formatTime = (timestamp: string) => {
+    try {
+      const date = new Date(timestamp);
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } catch {
+      return '';
+    }
+  };
+
   return (
     <div className="flex h-full w-72 flex-col border-r bg-background">
       <div className="flex items-center gap-3 border-b px-4 py-3">
         <Avatar className="h-10 w-10">
           <AvatarImage src="/placeholder-user.jpg" alt="User" />
-          <AvatarFallback>JP</AvatarFallback>
+          <AvatarFallback>U</AvatarFallback>
         </Avatar>
         <div className="flex-1">
           <Input
             type="search"
-            placeholder="Search or start new chat"
+            placeholder="Search contacts..."
             className="w-full rounded-lg bg-muted px-3 py-2 text-sm"
             value={searchTerm}
-            onChange={(e) => onSearchChange(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
           />
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="rounded-full">
-              <MoreVertical className="h-5 w-5" />
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+              </svg>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -50,26 +95,63 @@ export function ChatSidebar({ searchTerm, onSearchChange }: ChatSidebarProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <ScrollArea className="flex-1 overflow-auto">
-        <div className="grid gap-2 p-4">
-          <Link
-            href="#"
-            className="flex items-center gap-3 rounded-lg bg-muted/50 p-3 transition-colors hover:bg-muted"
-            prefetch={false}
-          >
-            <Avatar className="h-12 w-12">
-              <AvatarImage src="/placeholder-user.jpg" alt="John Doe" />
-              <AvatarFallback>JP</AvatarFallback>
-            </Avatar>
-            <div className="flex-1">
-              <div className="font-medium">John Doe</div>
-              <div className="text-sm text-muted-foreground">
-                Hey, how are you doing?
+
+      <ScrollArea className="flex-1 overflow-auto" onScroll={handleScroll}>
+        {error && (
+          <div className="p-4 text-center text-sm text-destructive">
+            {error}
+          </div>
+        )}
+
+        <div className="grid gap-1 p-2">
+          {contacts.map((contact) => (
+            <button
+              key={contact.id}
+              onClick={() => onContactSelect(contact)}
+              className={`flex items-center gap-3 rounded-lg p-3 text-left transition-colors hover:bg-muted ${
+                selectedContactId === contact.id ? 'bg-muted' : ''
+              }`}
+            >
+              <Avatar className="h-12 w-12">
+                <AvatarImage src="/placeholder-user.jpg" alt={contact.name} />
+                <AvatarFallback>
+                  {contact.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between">
+                  <div className="font-medium truncate">{contact.name}</div>
+                  {contact.lastMessage && (
+                    <div className="text-xs text-muted-foreground">
+                      {formatTime(contact.lastMessage.fecha)}
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-muted-foreground truncate">
+                    {contact.lastMessage?.content || 'No messages yet'}
+                  </div>
+                  {contact.messageCount > 0 && (
+                    <div className="bg-primary text-primary-foreground text-xs rounded-full px-2 py-1 min-w-[20px] text-center">
+                      {contact.messageCount}
+                    </div>
+                  )}
+                </div>
               </div>
+            </button>
+          ))}
+
+          {loading && (
+            <div className="flex items-center justify-center p-4">
+              <Loader2 className="h-6 w-6 animate-spin" />
             </div>
-            <div className="text-xs text-muted-foreground">12:34 PM</div>
-          </Link>
-          {/* Aquí irá .map(sessions) más adelante */}
+          )}
+
+          {!loading && contacts.length === 0 && !error && (
+            <div className="p-4 text-center text-sm text-muted-foreground">
+              No contacts found
+            </div>
+          )}
         </div>
       </ScrollArea>
     </div>
