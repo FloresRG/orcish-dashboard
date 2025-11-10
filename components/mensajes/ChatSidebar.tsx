@@ -13,6 +13,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2 } from "lucide-react";
 import { useContacts } from "@/hooks/useContacts";
 import { Contact } from "@/lib/conect-front";
+import { Badge } from "@/components/ui/badge";
 
 interface ChatSidebarProps {
   searchTerm: string;
@@ -72,7 +73,7 @@ export function ChatSidebar({
         <div className="flex-1">
           <Input
             type="search"
-            placeholder="Search contacts..."
+            placeholder="Buscar contactos..."
             className="w-full rounded-lg bg-muted px-3 py-2 text-sm"
             value={searchTerm}
             onChange={(e) => handleSearchChange(e.target.value)}
@@ -87,11 +88,11 @@ export function ChatSidebar({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>New group</DropdownMenuItem>
-            <DropdownMenuItem>New broadcast</DropdownMenuItem>
-            <DropdownMenuItem>Linked devices</DropdownMenuItem>
-            <DropdownMenuItem>Starred messages</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem>Nuevo grupo</DropdownMenuItem>
+            <DropdownMenuItem>Nueva transmisión</DropdownMenuItem>
+            <DropdownMenuItem>Dispositivos vinculados</DropdownMenuItem>
+            <DropdownMenuItem>Mensajes destacados</DropdownMenuItem>
+            <DropdownMenuItem>Configuración</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -106,32 +107,42 @@ export function ChatSidebar({
         <div className="grid gap-1 p-2">
           {contacts.map((contact) => (
             <button
-              key={contact.id}
+              key={contact.id_contac}
               onClick={() => onContactSelect(contact)}
               className={`flex items-center gap-3 rounded-lg p-3 text-left transition-colors hover:bg-muted ${
-                selectedContactId === contact.id ? 'bg-muted' : ''
+                selectedContactId === contact.id_contac ? 'bg-muted' : ''
               }`}
             >
               <Avatar className="h-12 w-12">
-                <AvatarImage src="/placeholder-user.jpg" alt={contact.name} />
+                <AvatarImage src="/placeholder-user.jpg" alt={contact.nombre_completo} />
                 <AvatarFallback>
-                  {contact.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                  {contact.nombre_completo?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <div className="font-medium truncate">{contact.name}</div>
-                  {contact.lastMessage && (
-                    <div className="text-xs text-muted-foreground">
-                      {formatTime(contact.lastMessage.fecha)}
-                    </div>
-                  )}
+                  <div className="font-medium truncate">{contact.nombre_completo}</div>
+                  <div className="flex items-center gap-1">
+                    {contact.estado && (
+                      <Badge variant={
+                        contact.estado === 'caliente' ? 'default' :
+                        contact.estado === 'tibio' ? 'secondary' : 'outline'
+                      } className="text-xs">
+                        {contact.estado}
+                      </Badge>
+                    )}
+                    {contact.ia && (
+                      <Badge variant="outline" className="text-xs">
+                        IA
+                      </Badge>
+                    )}
+                  </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-muted-foreground truncate">
-                    {contact.lastMessage?.content || 'No messages yet'}
+                    {contact.phone || 'Sin teléfono'}
                   </div>
-                  {contact.messageCount > 0 && (
+                  {contact.messageCount && contact.messageCount > 0 && (
                     <div className="bg-primary text-primary-foreground text-xs rounded-full px-2 py-1 min-w-[20px] text-center">
                       {contact.messageCount}
                     </div>
@@ -149,7 +160,7 @@ export function ChatSidebar({
 
           {!loading && contacts.length === 0 && !error && (
             <div className="p-4 text-center text-sm text-muted-foreground">
-              No contacts found
+              No se encontraron contactos
             </div>
           )}
         </div>

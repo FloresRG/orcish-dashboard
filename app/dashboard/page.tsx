@@ -106,14 +106,14 @@ export default function UserDashboardPage() {
               <div className="px-4 lg:px-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h1 className="text-3xl font-bold">My Dashboard</h1>
+                    <h1 className="text-3xl font-bold">Mi Panel de Control</h1>
                     <p className="text-muted-foreground">
-                      Welcome back, {user.name}! Here's your personal overview.
+                      ¡Bienvenido de vuelta, {user.name}! Aquí tienes tu vista general personal.
                     </p>
                   </div>
                   <Badge variant="outline" className="text-sm">
                     <Zap className="mr-1 h-3 w-3" />
-                    Personal Dashboard
+                    Panel Personal
                   </Badge>
                 </div>
 
@@ -125,45 +125,45 @@ export default function UserDashboardPage() {
                       <Phone className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">Manage</div>
+                      <div className="text-2xl font-bold">Administrar</div>
                       <p className="text-xs text-muted-foreground">
-                        Your WhatsApp sessions
+                        Tus sesiones de WhatsApp
                       </p>
                     </CardContent>
                   </Card>
                   <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => router.push('/Mensajes')}>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Messages</CardTitle>
+                      <CardTitle className="text-sm font-medium">Mensajes</CardTitle>
                       <MessageSquare className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold">Chat</div>
                       <p className="text-xs text-muted-foreground">
-                        Send & receive messages
+                        Enviar y recibir mensajes
                       </p>
                     </CardContent>
                   </Card>
                   <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => router.push('/courses')}>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Courses</CardTitle>
+                      <CardTitle className="text-sm font-medium">Cursos</CardTitle>
                       <BookOpen className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">Learn</div>
+                      <div className="text-2xl font-bold">Aprender</div>
                       <p className="text-xs text-muted-foreground">
-                        Access your courses
+                        Accede a tus cursos
                       </p>
                     </CardContent>
                   </Card>
                   <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => router.push('/profile')}>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Profile</CardTitle>
+                      <CardTitle className="text-sm font-medium">Perfil</CardTitle>
                       <Users className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">Settings</div>
+                      <div className="text-2xl font-bold">Configuración</div>
                       <p className="text-xs text-muted-foreground">
-                        Manage your account
+                        Gestiona tu cuenta
                       </p>
                     </CardContent>
                   </Card>
@@ -175,21 +175,21 @@ export default function UserDashboardPage() {
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <MessageSquare className="h-5 w-5" />
-                        My Messages
+                        Mis Mensajes
                       </CardTitle>
-                      <CardDescription>Your messaging activity</CardDescription>
+                      <CardDescription>Tu actividad de mensajería</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-sm">Total Sent:</span>
+                        <span className="text-sm">Total Enviados:</span>
                         <span className="font-medium">{overview?.messages.outgoingMessages || 0}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm">Total Received:</span>
+                        <span className="text-sm">Total Recibidos:</span>
                         <span className="font-medium">{overview?.messages.incomingMessages || 0}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm">This Week:</span>
+                        <span className="text-sm">Esta Semana:</span>
                         <span className="font-medium text-blue-600">{overview?.messages.messagesLast7Days || 0}</span>
                       </div>
                     </CardContent>
@@ -199,21 +199,21 @@ export default function UserDashboardPage() {
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <Users className="h-5 w-5" />
-                        My Contacts
+                        Mis Contactos
                       </CardTitle>
-                      <CardDescription>People you've connected with</CardDescription>
+                      <CardDescription>Personas con las que te has conectado</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-sm">Total Contacts:</span>
+                        <span className="text-sm">Contactos Totales:</span>
                         <span className="font-medium">{overview?.contacts.totalContacts || 0}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm">Active:</span>
+                        <span className="text-sm">Activos:</span>
                         <span className="font-medium text-green-600">{overview?.contacts.activeContacts || 0}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm">Registered:</span>
+                        <span className="text-sm">Registrados:</span>
                         <span className="font-medium">{overview?.contacts.registeredContacts || 0}</span>
                       </div>
                     </CardContent>
@@ -223,21 +223,21 @@ export default function UserDashboardPage() {
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <BookOpen className="h-5 w-5" />
-                        My Learning
+                        Mi Aprendizaje
                       </CardTitle>
-                      <CardDescription>Your course progress</CardDescription>
+                      <CardDescription>Tu progreso en cursos</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-sm">Total Courses:</span>
+                        <span className="text-sm">Cursos Totales:</span>
                         <span className="font-medium">{overview?.courses.totalCourses || 0}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm">Active:</span>
+                        <span className="text-sm">Activos:</span>
                         <span className="font-medium text-green-600">{overview?.courses.activeCourses || 0}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm">Learning Content:</span>
+                        <span className="text-sm">Contenido de Aprendizaje:</span>
                         <span className="font-medium text-blue-600">{overview?.courses.totalLearningContent || 0}</span>
                       </div>
                     </CardContent>
@@ -249,9 +249,9 @@ export default function UserDashboardPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <TrendingUp className="h-5 w-5" />
-                      My Message Activity (Last 30 Days)
+                      Mi Actividad de Mensajes (Últimos 30 Días)
                     </CardTitle>
-                    <CardDescription>Your messaging patterns over time</CardDescription>
+                    <CardDescription>Tus patrones de mensajería a lo largo del tiempo</CardDescription>
                   </CardHeader>
                   <CardContent>
                     {messageTrends && messageTrends.length > 0 ? (
@@ -289,8 +289,8 @@ export default function UserDashboardPage() {
                       <div className="flex items-center justify-center h-[200px] text-muted-foreground">
                         <div className="text-center">
                           <BarChart3 className="h-12 w-12 mx-auto mb-2" />
-                          <p>No message data available yet</p>
-                          <p className="text-sm">Start chatting to see your activity!</p>
+                          <p>Aún no hay datos de mensajes disponibles</p>
+                          <p className="text-sm">¡Comienza a chatear para ver tu actividad!</p>
                         </div>
                       </div>
                     )}
@@ -302,17 +302,17 @@ export default function UserDashboardPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Activity className="h-5 w-5" />
-                      Recent Activity
+                      Actividad Reciente
                     </CardTitle>
-                    <CardDescription>Your latest interactions</CardDescription>
+                    <CardDescription>Tus últimas interacciones</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       <div className="flex items-center gap-3 p-3 border rounded-lg">
                         <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                         <div className="flex-1">
-                          <p className="text-sm font-medium">Welcome to your dashboard!</p>
-                          <p className="text-xs text-muted-foreground">This is where you'll see your activity updates</p>
+                          <p className="text-sm font-medium">¡Bienvenido a tu panel de control!</p>
+                          <p className="text-xs text-muted-foreground">Aquí verás las actualizaciones de tu actividad</p>
                         </div>
                         <div className="text-xs text-muted-foreground">
                           <Clock className="inline h-3 w-3 mr-1" />
@@ -321,8 +321,8 @@ export default function UserDashboardPage() {
                       </div>
                       <div className="text-center py-4 text-muted-foreground">
                         <Calendar className="h-8 w-8 mx-auto mb-2" />
-                        <p>No recent activity yet</p>
-                        <p className="text-sm">Your interactions will appear here</p>
+                        <p>Aún no hay actividad reciente</p>
+                        <p className="text-sm">Tus interacciones aparecerán aquí</p>
                       </div>
                     </div>
                   </CardContent>

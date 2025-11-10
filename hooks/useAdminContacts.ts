@@ -73,9 +73,20 @@ export const useAdminContacts = () => {
     }
   }, []);
 
-  const getContactMessages = useCallback(async (phone: string) => {
+  const getContactMessages = useCallback(async (contactId: string) => {
     try {
-      const messages = await contactsApi.getMessages(phone);
+      const messages = await contactsApi.getMessages(contactId);
+      setContactMessages(messages);
+      return messages;
+    } catch (error) {
+      toast.error('Failed to load contact messages');
+      throw error;
+    }
+  }, []);
+
+  const getContactMessagesByPhone = useCallback(async (phone: string) => {
+    try {
+      const messages = await contactsApi.getMessagesByPhone(phone);
       setContactMessages(messages);
       return messages;
     } catch (error) {
@@ -118,6 +129,7 @@ export const useAdminContacts = () => {
     deleteContact,
     getContactByPhone,
     getContactMessages,
+    getContactMessagesByPhone,
     updateWaitingMessages,
     toggleContactIA,
   };

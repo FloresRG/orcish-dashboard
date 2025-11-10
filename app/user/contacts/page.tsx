@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { useContacts } from "@/hooks/useContacts";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -10,7 +11,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { UserRole } from "@/types/auth";
-import { Contact } from "@/types/admin";
+import { Contact as AdminContact } from "@/types/admin";
+import { Contact } from "@/lib/conect-front";
 import {
   Users,
   MessageSquare,
@@ -26,8 +28,14 @@ import {
 export default function UserContactsPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
-  const [contacts, setContacts] = useState<Contact[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    contacts,
+    loading,
+    loadContactsByUser,
+    createNewContact,
+    updateContactData,
+    deleteContactData,
+  } = useContacts(user?.id || null);
 
   useEffect(() => {
     if (!authLoading && (!user || user.role !== UserRole.USER)) {
@@ -38,70 +46,17 @@ export default function UserContactsPage() {
 
     if (user?.role === UserRole.USER) {
       console.log('👥 UserContactsPage: Loading contacts for user');
-      loadContacts();
+      loadContactsByUser(user.id);
     }
-  }, [user, authLoading, router]);
+  }, [user, authLoading, router, loadContactsByUser]);
 
-  const loadContacts = async () => {
-    try {
-      setLoading(true);
-      // TODO: Implement API call to get user's contacts
-      // const response = await fetch(`/api/v1/contact/user/${user.id}`);
-      // const data = await response.json();
-      // setContacts(data);
-
-      // Mock data for now
-      setContacts([
-        {
-          id: "1",
-          nombre_completo: "Juan Pérez",
-          phone: "59112345678",
-          estado: "frio",
-          ia: true,
-          registrado: false,
-          fecha: "2024-01-15T10:00:00.000Z",
-          messageCount: 5,
-          lastMessage: {
-            content: "Hola, quiero información sobre cursos",
-            fecha: "2024-01-15T10:30:00.000Z",
-            estado: "recibido"
-          }
-        },
-        {
-          id: "2",
-          nombre_completo: "María García",
-          phone: "59187654321",
-          estado: "tibio",
-          ia: false,
-          registrado: true,
-          fecha: "2024-01-14T15:20:00.000Z",
-          messageCount: 12,
-          lastMessage: {
-            content: "¿Cuál es el precio del curso?",
-            fecha: "2024-01-15T09:15:00.000Z",
-            estado: "enviado"
-          }
-        }
-      ]);
-    } catch (error) {
-      console.error('❌ UserContactsPage: Failed to load contacts:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Load contacts is now handled by useContacts hook
 
   const handleToggleIA = async (contact: Contact) => {
     try {
-      // TODO: Implement API call to toggle IA
-      // await fetch(`/api/v1/contact/cambiar-ia/${contact.phone}`, {
-      //   method: 'PATCH',
-      //   body: JSON.stringify({ ia: !contact.ia })
-      // });
+      if (!user?.id || !contact.id_contac) return;
 
-      // Update local state
-      setContacts(prev => prev.map(c =>
-        c.id === contact.id ? { ...c, ia: !c.ia } : c
-      ));
+      await updateContactData(user.id, contact.id_contac, { ia: !contact.ia });
     } catch (error) {
       console.error('❌ UserContactsPage: Failed to toggle IA:', error);
     }
@@ -109,11 +64,11 @@ export default function UserContactsPage() {
 
   const handleUpdateWaitingMessages = async (contact: Contact) => {
     try {
-      // TODO: Implement API call to update waiting messages
-      // await fetch(`/api/v1/contact/actualizar-estados/${contact.phone}`, {
-      //   method: 'PUT'
-      // });
+      if (!contact.phone) return;
 
+      // Use admin API to update waiting messages
+      const { contactsApi } = await import('@/lib/admin-api');
+      await contactsApi.updateWaitingMessages(contact.phone);
       console.log('📝 Updated waiting messages for contact:', contact.phone);
     } catch (error) {
       console.error('❌ UserContactsPage: Failed to update waiting messages:', error);
@@ -157,14 +112,14 @@ export default function UserContactsPage() {
               <div className="px-4 lg:px-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h1 className="text-3xl font-bold">My Contacts</h1>
+                    <h1 className="text-3xl font-bold">Mis Contactos</h1>
                     <p className="text-muted-foreground">
-                      Manage your personal contacts and lead interactions (User Access)
+                      Gestiona tus contactos personales e interacciones de leads (Acceso de Usuario)
                     </p>
                   </div>
-                  <Button variant="outline" onClick={loadContacts}>
+                  <Button variant="outline" onClick={() => loadContactsByUser(user?.id || '')}>
                     <RefreshCw className="mr-2 h-4 w-4" />
-                    Refresh
+                    Actualizar
                   </Button>
                 </div>
 
@@ -172,7 +127,7 @@ export default function UserContactsPage() {
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-6">
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Total Contacts</CardTitle>
+                      <CardTitle className="text-sm font-medium">Contactos Totales</CardTitle>
                       <Users className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
@@ -181,7 +136,7 @@ export default function UserContactsPage() {
                   </Card>
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">With AI</CardTitle>
+                      <CardTitle className="text-sm font-medium">Con IA</CardTitle>
                       <Bot className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
@@ -192,23 +147,23 @@ export default function UserContactsPage() {
                   </Card>
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Active Leads</CardTitle>
+                      <CardTitle className="text-sm font-medium">Leads Activos</CardTitle>
                       <MessageSquare className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold">
-                        {contacts.filter(c => c.estado !== 'cerrado').length}
+                        {contacts.filter(c => c.estado !== 'cerrado' && c.estado !== null).length}
                       </div>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Converted</CardTitle>
+                      <CardTitle className="text-sm font-medium">Convertidos</CardTitle>
                       <Badge variant="default" className="text-xs">Closed</Badge>
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold">
-                        {contacts.filter(c => c.estado === 'cerrado').length}
+                        {contacts.filter(c => c.estado === 'cerrado' || c.estado === null).length}
                       </div>
                     </CardContent>
                   </Card>
@@ -217,26 +172,26 @@ export default function UserContactsPage() {
                 {/* Contacts List */}
                 <Card className="mt-6">
                   <CardHeader>
-                    <CardTitle>My Contacts</CardTitle>
+                    <CardTitle>Mis Contactos</CardTitle>
                     <CardDescription>
-                      Manage your personal contacts and their lead status.
+                      Gestiona tus contactos personales y su estado de leads.
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     {loading ? (
                       <div className="text-center py-8">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                        <p>Loading contacts...</p>
+                        <p>Cargando contactos...</p>
                       </div>
                     ) : contacts.length === 0 ? (
                       <div className="text-center py-8">
                         <Users className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                        <p className="text-muted-foreground">No contacts found</p>
+                        <p className="text-muted-foreground">No se encontraron contactos</p>
                       </div>
                     ) : (
                       <div className="space-y-4">
                         {contacts.map((contact) => (
-                          <Card key={contact.id} className="border">
+                          <Card key={contact.id_contac} className="border">
                             <CardContent className="pt-4">
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-4">
@@ -247,13 +202,13 @@ export default function UserContactsPage() {
                                       {contact.phone}
                                     </div>
                                     <div className="text-xs text-muted-foreground">
-                                      Created: {new Date(contact.fecha).toLocaleDateString()}
+                                      Creado: {contact.fecha ? new Date(contact.fecha).toLocaleDateString() : 'N/A'}
                                     </div>
                                   </div>
                                   <div className="flex items-center gap-2">
-                                    {getStateBadge(contact.estado)}
+                                    {getStateBadge(contact.estado || 'frio')}
                                     {contact.ia && <Badge variant="outline">AI</Badge>}
-                                    <Badge variant="secondary">{contact.messageCount} messages</Badge>
+                                    <Badge variant="secondary">{contact.messageCount} mensajes</Badge>
                                   </div>
                                 </div>
                                 <div className="flex gap-2">
@@ -261,6 +216,7 @@ export default function UserContactsPage() {
                                     variant="outline"
                                     size="sm"
                                     onClick={() => handleToggleIA(contact)}
+                                    disabled={!contact.phone}
                                   >
                                     {contact.ia ? (
                                       <ToggleRight className="h-4 w-4 text-green-500" />
@@ -273,9 +229,10 @@ export default function UserContactsPage() {
                                     variant="outline"
                                     size="sm"
                                     onClick={() => handleUpdateWaitingMessages(contact)}
+                                    disabled={!contact.phone}
                                   >
                                     <MessageSquare className="h-4 w-4 mr-1" />
-                                    Update Messages
+                                    Actualizar Mensajes
                                   </Button>
                                   <Button variant="outline" size="sm">
                                     <Edit className="h-4 w-4" />
@@ -284,7 +241,7 @@ export default function UserContactsPage() {
                               </div>
                               {contact.lastMessage && (
                                 <div className="mt-2 text-sm text-muted-foreground">
-                                  Last: {contact.lastMessage.content.substring(0, 100)}
+                                  Último: {contact.lastMessage.content.substring(0, 100)}
                                   {contact.lastMessage.content.length > 100 && '...'}
                                 </div>
                               )}

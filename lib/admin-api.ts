@@ -164,6 +164,7 @@ export const whatsappApi = {
 
 // Contact Management API
 export const contactsApi = {
+  // Admin endpoints (all contacts)
   create: (data: CreateContactRequest): Promise<Contact> =>
     apiRequest('/api/v1/contact', {
       method: 'POST',
@@ -179,26 +180,118 @@ export const contactsApi = {
       body: JSON.stringify(data),
     }),
 
-  delete: (userId: string, contactId: string): Promise<void> =>
-    apiRequest(`/api/v1/contact/user/${userId}/${contactId}`, {
+  delete: async (userId: string, contactId: string): Promise<void> => {
+    const token = getAuthToken();
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/v1/contact/user/${userId}/${contactId}`, {
       method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Error ${response.status}: ${errorText}`);
+    }
+
+    // Don't try to parse JSON for 204 No Content or empty responses
+    return;
+  },
+
+  // User-specific endpoints
+  createForUser: (userId: string, data: CreateContactRequest): Promise<Contact> =>
+    apiRequest(`/api/v1/contact/user/${userId}`, {
+      method: 'POST',
+      body: JSON.stringify(data),
     }),
 
+  listForUser: (userId: string): Promise<Contact[]> =>
+    apiRequest(`/api/v1/contact/user/${userId}`),
+
+  getForUser: (userId: string, contactId: string): Promise<Contact> =>
+    apiRequest(`/api/v1/contact/user/${userId}/${contactId}`),
+
+  updateForUser: (userId: string, contactId: string, data: UpdateContactRequest): Promise<Contact> =>
+    apiRequest(`/api/v1/contact/user/${userId}/${contactId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  deleteForUser: async (userId: string, contactId: string): Promise<void> => {
+    const token = getAuthToken();
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/v1/contact/user/${userId}/${contactId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Error ${response.status}: ${errorText}`);
+    }
+
+    // Don't try to parse JSON for 204 No Content or empty responses
+    return;
+  },
+
+  // Message and phone-based endpoints
   getByPhone: (phone: string): Promise<Contact> =>
     apiRequest(`/api/v1/contact/phone/${phone}`),
 
-  getMessages: (phone: string): Promise<ContactMessage[]> =>
-    apiRequest(`/api/v1/contact/messages/${phone}`),
+  getMessages: (contactId: string): Promise<ContactMessage[]> =>
+    apiRequest(`/api/v1/contact/messages/${contactId}`),
 
-  updateWaitingMessages: (phone: string): Promise<void> =>
-    apiRequest(`/api/v1/contact/actualizar-estados/${phone}`, {
+  getMessagesByPhone: (phone: string): Promise<ContactMessage[]> =>
+    apiRequest(`/api/v1/contact/messages/phone/${phone}`),
+
+  updateWaitingMessages: async (phone: string): Promise<void> => {
+    const token = getAuthToken();
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/v1/contact/actualizar-estados/${phone}`, {
       method: 'PUT',
-    }),
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Error ${response.status}: ${errorText}`);
+    }
+
+    // Don't try to parse JSON for empty responses
+    return;
+  },
 
   toggleIA: (phone: string, ia: boolean): Promise<Contact> =>
     apiRequest(`/api/v1/contact/cambiar-ia/${phone}`, {
       method: 'PATCH',
       body: JSON.stringify({ ia }),
+    }),
+
+  // Send message endpoints
+  sendMessage: (data: { userId: string; phone: string; message: string }): Promise<{ message: string; result: unknown }> =>
+    apiRequest('/api/v1/contact/enviar', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  sendMessageAlt: (data: { userId: string; phone: string; message: string }): Promise<{ status: string; message: string; result: unknown }> =>
+    apiRequest('/api/v1/contact/sendMessage', {
+      method: 'POST',
+      body: JSON.stringify(data),
     }),
 };
 

@@ -110,7 +110,7 @@ export interface Contact {
   id_contac?: string;
   phone: string;
   nombre_completo: string;
-  estado: string;
+  estado: 'frio' | 'tibio' | 'caliente' | 'cerrado' | null;
   ia: boolean;
   registrado: boolean;
   fecha: string;

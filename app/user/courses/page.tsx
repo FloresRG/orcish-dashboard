@@ -72,14 +72,14 @@ export default function UserCoursesPage() {
               <div className="px-4 lg:px-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h1 className="text-3xl font-bold">Available Courses</h1>
+                    <h1 className="text-3xl font-bold">Cursos Disponibles</h1>
                     <p className="text-muted-foreground">
-                      Explore and access educational content (User Access)
+                      Explora y accede a contenido educativo (Acceso de Usuario)
                     </p>
                   </div>
                   <Button variant="outline" onClick={() => loadCourses()}>
                     <RefreshCw className="mr-2 h-4 w-4" />
-                    Refresh
+                    Actualizar
                   </Button>
                 </div>
 
@@ -87,16 +87,16 @@ export default function UserCoursesPage() {
                   <div className="flex items-center justify-center py-12">
                     <div className="text-center">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                      <p>Loading courses...</p>
+                      <p>Cargando cursos...</p>
                     </div>
                   </div>
                 ) : courses.length === 0 ? (
                   <Card className="mt-6">
                     <CardContent className="flex flex-col items-center justify-center py-12">
                       <BookOpen className="h-12 w-12 text-muted-foreground mb-4" />
-                      <h3 className="text-lg font-medium mb-2">No courses available</h3>
+                      <h3 className="text-lg font-medium mb-2">No hay cursos disponibles</h3>
                       <p className="text-muted-foreground text-center">
-                        There are currently no courses available. Please check back later.
+                        Actualmente no hay cursos disponibles. Por favor, vuelve a revisar más tarde.
                       </p>
                     </CardContent>
                   </Card>
@@ -128,11 +128,11 @@ export default function UserCoursesPage() {
                             {/* Course info will be displayed here when available */}
                             <div className="flex items-center gap-2">
                               <Clock className="h-4 w-4 text-muted-foreground" />
-                              <span>Duration: TBD</span>
+                              <span>Duración: Por definir</span>
                             </div>
                             <div className="flex items-center gap-2">
                               <DollarSign className="h-4 w-4 text-muted-foreground" />
-                              <span>Price: Contact</span>
+                              <span>Precio: Contactar</span>
                             </div>
                           </div>
 
@@ -141,7 +141,7 @@ export default function UserCoursesPage() {
                               className="flex-1"
                               onClick={() => handleViewCourse(course.id)}
                             >
-                              View Details
+                              Ver Detalles
                             </Button>
                             {course.estado === 'activo' && (
                               <Button variant="outline" size="sm">
@@ -151,7 +151,7 @@ export default function UserCoursesPage() {
                           </div>
 
                           <div className="text-xs text-muted-foreground">
-                            Created: {new Date(course.createdAt).toLocaleDateString()}
+                            Creado: {new Date(course.createdAt).toLocaleDateString()}
                           </div>
                         </CardContent>
                       </Card>

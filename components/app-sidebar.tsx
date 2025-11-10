@@ -57,12 +57,12 @@ const getNavigationData = (userRole?: UserRole) => {
         ...baseData,
         navMain: [
           {
-            title: "Dashboard",
+            title: "Panel de Control",
             url: "/admin/dashboard",
             icon: IconDashboard,
           },
           {
-            title: "Users",
+            title: "Usuarios",
             url: "/admin/users",
             icon: IconUser,
           },
@@ -72,7 +72,7 @@ const getNavigationData = (userRole?: UserRole) => {
             icon: IconPhone,
           },
           {
-            title: "Contacts",
+            title: "Contactos",
             url: "/admin/contacts",
             icon: IconMessage,
           },
@@ -82,7 +82,7 @@ const getNavigationData = (userRole?: UserRole) => {
             icon: IconMessage,
           },
           {
-            title: "Courses",
+            title: "Cursos",
             url: "/admin/courses",
             icon: IconBook,
           },
@@ -92,12 +92,12 @@ const getNavigationData = (userRole?: UserRole) => {
             icon: IconFileAi,
           },
           {
-            title: "AI System",
+            title: "Sistema IA",
             url: "/admin/ai",
             icon: IconRobot,
           },
           {
-            title: "Analytics",
+            title: "Analíticas",
             url: "/admin/analytics",
             icon: IconChartLine,
           },
@@ -111,7 +111,7 @@ const getNavigationData = (userRole?: UserRole) => {
         ...baseData,
         navMain: [
           {
-            title: "Dashboard",
+            title: "Panel de Control",
             url: "/dashboard",
             icon: IconDashboard,
           },

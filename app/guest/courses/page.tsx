@@ -96,14 +96,14 @@ export default function GuestCoursesPage() {
               <div className="px-4 lg:px-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h1 className="text-3xl font-bold">Available Courses</h1>
+                    <h1 className="text-3xl font-bold">Cursos Disponibles</h1>
                     <p className="text-muted-foreground">
-                      Explore our educational offerings (Guest Access)
+                      Explora nuestras ofertas educativas (Acceso de Invitado)
                     </p>
                   </div>
                   <Button variant="outline" onClick={() => loadCourses()}>
                     <RefreshCw className="mr-2 h-4 w-4" />
-                    Refresh
+                    Actualizar
                   </Button>
                 </div>
 
@@ -112,19 +112,19 @@ export default function GuestCoursesPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Bot className="h-5 w-5" />
-                      AI Course Assistant
+                      Asistente de Cursos IA
                     </CardTitle>
                     <CardDescription>
-                      Ask questions about our courses and get instant answers
+                      Haz preguntas sobre nuestros cursos y obtén respuestas instantáneas
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <Label htmlFor="ai-query">Ask about courses</Label>
+                      <Label htmlFor="ai-query">Pregunta sobre cursos</Label>
                       <div className="flex gap-2">
                         <Input
                           id="ai-query"
-                          placeholder="e.g., What Python courses do you have?"
+                          placeholder="ej., ¿Qué cursos de Python tienes?"
                           value={aiQuery}
                           onChange={(e) => setAiQuery(e.target.value)}
                           onKeyPress={(e) => e.key === 'Enter' && handleAIQuery()}
@@ -144,7 +144,7 @@ export default function GuestCoursesPage() {
                         <div className="flex items-start gap-2">
                           <Bot className="h-5 w-5 mt-0.5 text-primary" />
                           <div>
-                            <p className="text-sm font-medium mb-1">AI Assistant</p>
+                            <p className="text-sm font-medium mb-1">Asistente IA</p>
                             <p className="text-sm whitespace-pre-wrap">{aiResponse}</p>
                           </div>
                         </div>
@@ -158,16 +158,16 @@ export default function GuestCoursesPage() {
                   <div className="flex items-center justify-center py-12 mt-6">
                     <div className="text-center">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                      <p>Loading courses...</p>
+                      <p>Cargando cursos...</p>
                     </div>
                   </div>
                 ) : courses.length === 0 ? (
                   <Card className="mt-6">
                     <CardContent className="flex flex-col items-center justify-center py-12">
                       <BookOpen className="h-12 w-12 text-muted-foreground mb-4" />
-                      <h3 className="text-lg font-medium mb-2">No courses available</h3>
+                      <h3 className="text-lg font-medium mb-2">No hay cursos disponibles</h3>
                       <p className="text-muted-foreground text-center">
-                        There are currently no courses available. Please check back later.
+                        Actualmente no hay cursos disponibles. Por favor, vuelve a revisar más tarde.
                       </p>
                     </CardContent>
                   </Card>
@@ -200,7 +200,7 @@ export default function GuestCoursesPage() {
                               className="flex-1"
                               onClick={() => handleViewCourse(course.id.toString())}
                             >
-                              View Details
+                              Ver Detalles
                             </Button>
                             <Button
                               variant="outline"
@@ -211,7 +211,7 @@ export default function GuestCoursesPage() {
                           </div>
 
                           <div className="text-xs text-muted-foreground">
-                            Created: {new Date(course.createdAt).toLocaleDateString()}
+                            Creado: {new Date(course.createdAt).toLocaleDateString()}
                           </div>
                         </CardContent>
                       </Card>
@@ -228,7 +228,7 @@ export default function GuestCoursesPage() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div>
-                        <Label>Description</Label>
+                        <Label>Descripción</Label>
                         <p className="text-sm text-muted-foreground mt-1">
                           {selectedCourse.descripcion || selectedCourse.summary}
                         </p>
@@ -239,16 +239,16 @@ export default function GuestCoursesPage() {
                           {selectedCourse.estado}
                         </Badge>
                         <span className="text-sm text-muted-foreground">
-                          Created: {new Date(selectedCourse.createdAt).toLocaleDateString()}
+                          Creado: {new Date(selectedCourse.createdAt).toLocaleDateString()}
                         </span>
                       </div>
 
                       <div className="flex gap-2">
                         <Button onClick={() => setSelectedCourse(null)} variant="outline">
-                          Close
+                          Cerrar
                         </Button>
                         <Button onClick={() => router.push('/login')}>
-                          Register to Access
+                          Registrarse para Acceder
                         </Button>
                       </div>
                     </CardContent>

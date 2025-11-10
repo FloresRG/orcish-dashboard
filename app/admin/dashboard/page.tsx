@@ -115,14 +115,14 @@ export default function AdminDashboardPage() {
               <div className="px-4 lg:px-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+                    <h1 className="text-3xl font-bold">Panel de Administración</h1>
                     <p className="text-muted-foreground">
-                      Complete system overview and analytics
+                      Vista completa del sistema y analíticas
                     </p>
                   </div>
                   <Badge variant="outline" className="text-sm">
                     <Zap className="mr-1 h-3 w-3" />
-                    Live Data
+                    Datos en Vivo
                   </Badge>
                 </div>
 
@@ -131,49 +131,49 @@ export default function AdminDashboardPage() {
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <Card>
                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Total Contacts</CardTitle>
+                        <CardTitle className="text-sm font-medium">Total de Contactos</CardTitle>
                         <Users className="h-4 w-4 text-muted-foreground" />
                       </CardHeader>
                       <CardContent>
                         <div className="text-2xl font-bold">{overview.contacts.totalContacts || 0}</div>
                         <p className="text-xs text-muted-foreground">
-                          {overview.contacts.activeContacts || 0} active
+                          {overview.contacts.activeContacts || 0} activos
                         </p>
                       </CardContent>
                     </Card>
                     <Card>
                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">WhatsApp Sessions</CardTitle>
+                        <CardTitle className="text-sm font-medium">Sesiones WhatsApp</CardTitle>
                         <Phone className="h-4 w-4 text-muted-foreground" />
                       </CardHeader>
                       <CardContent>
                         <div className="text-2xl font-bold">{overview.whatsapp.totalSessions || 0}</div>
                         <p className="text-xs text-muted-foreground">
-                          {overview.whatsapp.activeSessions || 0} active
+                          {overview.whatsapp.activeSessions || 0} activas
                         </p>
                       </CardContent>
                     </Card>
                     <Card>
                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Total Messages</CardTitle>
+                        <CardTitle className="text-sm font-medium">Total de Mensajes</CardTitle>
                         <MessageSquare className="h-4 w-4 text-muted-foreground" />
                       </CardHeader>
                       <CardContent>
                         <div className="text-2xl font-bold">{overview.messages.totalMessages || 0}</div>
                         <p className="text-xs text-muted-foreground">
-                          {overview.messages.responseRate || 0}% response rate
+                          {overview.messages.responseRate || 0}% tasa de respuesta
                         </p>
                       </CardContent>
                     </Card>
                     <Card>
                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Courses</CardTitle>
+                        <CardTitle className="text-sm font-medium">Cursos</CardTitle>
                         <BookOpen className="h-4 w-4 text-muted-foreground" />
                       </CardHeader>
                       <CardContent>
                         <div className="text-2xl font-bold">{overview.courses.totalCourses || 0}</div>
                         <p className="text-xs text-muted-foreground">
-                          {overview.courses.activeCourses || 0} active
+                          {overview.courses.activeCourses || 0} activos
                         </p>
                       </CardContent>
                     </Card>
@@ -187,9 +187,9 @@ export default function AdminDashboardPage() {
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <TrendingUp className="h-5 w-5" />
-                        Message Trends (Last 30 Days)
+                        Tendencias de Mensajes (Últimos 30 Días)
                       </CardTitle>
-                      <CardDescription>Daily message volume over time</CardDescription>
+                      <CardDescription>Volumen diario de mensajes a lo largo del tiempo</CardDescription>
                     </CardHeader>
                     <CardContent>
                       {messageTrends && messageTrends.length > 0 ? (
@@ -227,7 +227,7 @@ export default function AdminDashboardPage() {
                         <div className="flex items-center justify-center h-[200px] text-muted-foreground">
                           <div className="text-center">
                             <BarChart3 className="h-12 w-12 mx-auto mb-2" />
-                            <p>No trend data available</p>
+                            <p>No hay datos de tendencias disponibles</p>
                           </div>
                         </div>
                       )}
@@ -239,9 +239,9 @@ export default function AdminDashboardPage() {
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <Users className="h-5 w-5" />
-                        Contact Growth (Last 30 Days)
+                        Crecimiento de Contactos (Últimos 30 Días)
                       </CardTitle>
-                      <CardDescription>New contacts over time</CardDescription>
+                      <CardDescription>Nuevos contactos a lo largo del tiempo</CardDescription>
                     </CardHeader>
                     <CardContent>
                       {contactGrowth && contactGrowth.length > 0 ? (
@@ -289,7 +289,7 @@ export default function AdminDashboardPage() {
                         <div className="flex items-center justify-center h-[200px] text-muted-foreground">
                           <div className="text-center">
                             <TrendingUp className="h-12 w-12 mx-auto mb-2" />
-                            <p>No growth data available</p>
+                            <p>No hay datos de crecimiento disponibles</p>
                           </div>
                         </div>
                       )}
@@ -305,25 +305,25 @@ export default function AdminDashboardPage() {
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                           <Phone className="h-5 w-5" />
-                          WhatsApp Overview
+                          Resumen de WhatsApp
                         </CardTitle>
-                        <CardDescription>Session and message statistics</CardDescription>
+                        <CardDescription>Estadísticas de sesiones y mensajes</CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-2">
                         <div className="flex justify-between">
-                          <span className="text-sm">Total Sessions:</span>
+                          <span className="text-sm">Sesiones Totales:</span>
                           <span className="font-medium">{whatsappStats.totalSessions || 0}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-sm">Connected:</span>
+                          <span className="text-sm">Conectadas:</span>
                           <span className="font-medium text-green-600">{whatsappStats.connectedSessions || 0}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-sm">Messages Today:</span>
+                          <span className="text-sm">Mensajes Hoy:</span>
                           <span className="font-medium">{whatsappStats.messagesToday || 0}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-sm">Auto-responses:</span>
+                          <span className="text-sm">Respuestas Automáticas:</span>
                           <span className="font-medium">{whatsappStats.autoResponses || 0}</span>
                         </div>
                       </CardContent>
@@ -336,25 +336,25 @@ export default function AdminDashboardPage() {
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                           <Users className="h-5 w-5" />
-                          Contact Management
+                          Gestión de Contactos
                         </CardTitle>
-                        <CardDescription>Lead status distribution</CardDescription>
+                        <CardDescription>Distribución del estado de leads</CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-2">
                         <div className="flex justify-between">
-                          <span className="text-sm">Total Contacts:</span>
+                          <span className="text-sm">Contactos Totales:</span>
                           <span className="font-medium">{contactStats.totalContacts || 0}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-sm">Active:</span>
+                          <span className="text-sm">Activos:</span>
                           <span className="font-medium text-green-600">{contactStats.activeContacts || 0}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-sm">With AI:</span>
+                          <span className="text-sm">Con IA:</span>
                           <span className="font-medium">{contactStats.contactsWithIA || 0}</span>
                         </div>
                         <div className="text-xs text-muted-foreground mt-2">
-                          States: {contactStats.contactsByState ? Object.entries(contactStats.contactsByState).map(([state, count]) => `${state}: ${count}`).join(', ') : 'No state data'}
+                          Estados: {contactStats.contactsByState ? Object.entries(contactStats.contactsByState).map(([state, count]) => `${state}: ${count}`).join(', ') : 'Sin datos de estado'}
                         </div>
                       </CardContent>
                     </Card>
@@ -366,25 +366,25 @@ export default function AdminDashboardPage() {
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                           <BarChart3 className="h-5 w-5" />
-                          Message Analytics
+                          Analíticas de Mensajes
                         </CardTitle>
-                        <CardDescription>Communication metrics</CardDescription>
+                        <CardDescription>Métricas de comunicación</CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-2">
                         <div className="flex justify-between">
-                          <span className="text-sm">Total Messages:</span>
+                          <span className="text-sm">Mensajes Totales:</span>
                           <span className="font-medium">{messageStats.totalMessages || 0}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-sm">Today:</span>
+                          <span className="text-sm">Hoy:</span>
                           <span className="font-medium text-blue-600">{messageStats.messagesToday || 0}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-sm">This Week:</span>
+                          <span className="text-sm">Esta Semana:</span>
                           <span className="font-medium">{messageStats.messagesThisWeek || 0}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-sm">Avg/Day:</span>
+                          <span className="text-sm">Prom/Día:</span>
                           <span className="font-medium">{messageStats.averageMessagesPerDay || 0}</span>
                         </div>
                       </CardContent>
@@ -398,17 +398,17 @@ export default function AdminDashboardPage() {
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <Activity className="h-5 w-5" />
-                        System Health
+                        Salud del Sistema
                       </CardTitle>
-                      <CardDescription>Overall system status and performance</CardDescription>
+                      <CardDescription>Estado general del sistema y rendimiento</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="flex items-center gap-4">
                         <Badge variant="default">
-                          System Online
+                          Sistema En Línea
                         </Badge>
                         <span className="text-sm text-muted-foreground">
-                          Last updated: {overview?.timestamp ? new Date(overview.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString()}
+                          Última actualización: {overview?.timestamp ? new Date(overview.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString()}
                         </span>
                       </div>
                     </CardContent>

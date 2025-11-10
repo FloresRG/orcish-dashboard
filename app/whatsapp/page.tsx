@@ -181,16 +181,16 @@ export default function WhatsAppPage() {
             className="h-5 w-5 cursor-pointer"
             onClick={() => router.push("/dashboard")}
           />
-          Connect WhatsApp
+          Conectar WhatsApp
         </CardTitle>
         <CardDescription>
-          Enter your phone number to start the WhatsApp connection process
+          Ingresa tu número de teléfono para iniciar el proceso de conexión de WhatsApp
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handlePhoneSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone Number</Label>
+            <Label htmlFor="phone">Número de Teléfono</Label>
             <Input
               id="phone"
               type="tel"
@@ -204,7 +204,7 @@ export default function WhatsAppPage() {
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Creating Session...
+                Creando Sesión...
               </>
             ) : (
               "Continue"
@@ -223,10 +223,10 @@ export default function WhatsAppPage() {
             className="h-5 w-5 cursor-pointer"
             onClick={() => setCurrentStep("phone")}
           />
-          Scan QR Code
+          Escanear Código QR
         </CardTitle>
         <CardDescription>
-          Open WhatsApp on your phone and scan the QR code below
+          Abre WhatsApp en tu teléfono y escanea el código QR a continuación
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -236,12 +236,12 @@ export default function WhatsAppPage() {
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Generating QR...
+                  Generando QR...
                 </>
               ) : (
                 <>
                   <QrCode className="mr-2 h-4 w-4" />
-                  Get QR Code
+                  Obtener Código QR
                 </>
               )}
             </Button>
@@ -250,7 +250,7 @@ export default function WhatsAppPage() {
           <div className="space-y-4">
             <div className="flex justify-center">
               <img
-                src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/${qrCode}`}
+                src={`${process.env.NEXT_PUBLIC_API_BASE_URL}${qrCode}`}
                 alt="WhatsApp QR Code"
                 className="max-w-full h-auto border rounded-lg"
                 onError={(e) => {
@@ -269,7 +269,7 @@ export default function WhatsAppPage() {
               {verifying ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Verifying Connection...
+                  Verificando Conexión...
                 </>
               ) : (
                 <>
