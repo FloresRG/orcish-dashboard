@@ -6,7 +6,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { Loader2 } from "lucide-react";
 import { getAuthData } from "@/lib/storage";
-import { UserRole } from "@/types/auth";
+import { UserRole, User } from "@/types/auth";
 import { ChatSidebar } from "@/components/mensajes/ChatSidebar";
 import { ChatHeader } from "@/components/mensajes/ChatHeader";
 import { ChatWindow } from "@/components/mensajes/ChatWindow";
@@ -22,7 +22,7 @@ import { WhatsAppSession } from "@/lib/whatsapp";
 import { WebSocketMessage } from "@/hooks/useWebSocket";
 
 export default function MensajesPage() {
-  const [user, setUser] = useState<{ name: string; email: string; role: UserRole } | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSession, setSelectedSession] = useState<WhatsAppSession | null>(null);
@@ -346,7 +346,11 @@ export default function MensajesPage() {
 
                   {/* Contact settings panel — desktop only */}
                   <div className="hidden md:block">
-                    <ContactSettingsSidebar />
+                    <ContactSettingsSidebar
+                      contact={selectedContact}
+                      sessionId={selectedSession?.id}
+                      userId={user?.id}
+                    />
                   </div>
                 </>
               ) : (
@@ -391,7 +395,11 @@ export default function MensajesPage() {
 
                 {/* Contact settings panel — desktop only */}
                 <div className="hidden md:block">
-                  <ContactSettingsSidebar />
+                  <ContactSettingsSidebar
+                    contact={selectedContact}
+                    sessionId={selectedSession?.id}
+                    userId={user?.id}
+                  />
                 </div>
               </>
             ) : (

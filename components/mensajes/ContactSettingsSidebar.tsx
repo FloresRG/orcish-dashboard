@@ -7,21 +7,27 @@ import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { User, Mail, Calendar, Clock, ShieldCheck, Trash2, Archive, Volume2, Bot, Thermometer } from "lucide-react";
-import { Contact } from "@/lib/conect-front";
+import { Contact, toggleContactIA } from "@/lib/conect-front";
+import { useContacts } from "@/hooks/useContacts";
 import { useMessages } from "@/hooks/useMessages";
 import { useState } from "react";
 import { toast } from "sonner";
 
 interface ContactSettingsSidebarProps {
   contact?: Contact | null;
+  sessionId?: string | null;
+  userId?: string | null;
   isMobile?: boolean;
 }
 
 export function ContactSettingsSidebar({
   contact,
+  sessionId,
+  userId,
   isMobile = false,
 }: ContactSettingsSidebarProps) {
-  const { toggleContactIAStatus, updateWaitingMessagesForPhone } = useMessages(null, null);
+  const { updateContactData } = useContacts(sessionId || null);
+  const { updateWaitingMessagesForPhone } = useMessages(sessionId || null, contact?.id_contac || contact?.id || null);
   const [isUpdating, setIsUpdating] = useState(false);
 
   const handleToggleIA = async (enabled: boolean) => {
@@ -29,10 +35,15 @@ export function ContactSettingsSidebar({
 
     setIsUpdating(true);
     try {
-      await toggleContactIAStatus(contact.phone, enabled);
-      toast.success(`IA ${enabled ? 'enabled' : 'disabled'} for contact`);
+      const result = await toggleContactIA(contact.phone, enabled);
+      toast.success(result.message);
+      // Update local contact state to reflect the change
+      if (contact) {
+        contact.ia = enabled;
+      }
     } catch (error) {
       console.error('Error toggling IA:', error);
+      toast.error('No se pudo actualizar el estado de IA');
     } finally {
       setIsUpdating(false);
     }
@@ -115,10 +126,25 @@ export function ContactSettingsSidebar({
           <Label className="text-sm font-medium">Estado del Lead</Label>
           <Select
             value={displayContact?.estado || 'frio'}
-            onValueChange={(value) => {
-              // TODO: Implement status update
-              console.log('Update status to:', value);
+            onValueChange={async (value) => {
+              if (!contact?.id_contac || !userId) return;
+
+              setIsUpdating(true);
+              try {
+                const updatedContact = await updateContactData(userId, contact.id_contac, { estado: value as 'frio' | 'tibio' | 'caliente' });
+                toast.success(`Estado actualizado a ${value}`);
+                // Update local contact state to reflect the change
+                if (contact) {
+                  contact.estado = value as 'frio' | 'tibio' | 'caliente';
+                }
+              } catch (error) {
+                console.error('Error updating status:', error);
+                toast.error('No se pudo actualizar el estado del contacto');
+              } finally {
+                setIsUpdating(false);
+              }
             }}
+            disabled={isUpdating}
           >
             <SelectTrigger className="w-full mt-1">
               <SelectValue />
@@ -137,7 +163,7 @@ export function ContactSettingsSidebar({
             variant="outline"
             size="sm"
             onClick={() => handleToggleIA(!displayContact?.ia)}
-            disabled={isUpdating}
+            disabled={isUpdating || !userId}
           >
             {displayContact?.ia ? 'Desactivar' : 'Activar'}
           </Button>
