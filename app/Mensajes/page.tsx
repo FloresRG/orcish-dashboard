@@ -69,6 +69,7 @@ export default function MensajesPage() {
 
   console.log('🔍 MensajesPage: Hook values - sessionId:', selectedSession?.id, 'contactId:', selectedContact?.id_contac || selectedContact?.id);
   console.log('📨 MensajesPage: Messages count:', messages.length, 'loading:', messagesLoading, 'error:', messagesError);
+  console.log('🔌 WebSocket status - isConnected:', isConnected, 'selectedSession:', !!selectedSession);
 
   // Handle WebSocket messages - Using new service
   useEffect(() => {
@@ -329,7 +330,7 @@ export default function MensajesPage() {
 
                   {/* Main chat area */}
                   <div className="flex h-full flex-1 flex-col">
-                    <ChatHeader contact={currentContact} isWebSocketConnected={isConnected} onReconnect={connect} />
+                    <ChatHeader contact={currentContact} isWebSocketConnected={isConnected && !!selectedSession} onReconnect={connect} />
                     <ChatWindow
                       messages={messages}
                       loading={messagesLoading}
@@ -374,7 +375,7 @@ export default function MensajesPage() {
 
                 {/* Main chat area */}
                 <div className="flex h-full flex-1 flex-col">
-                  <ChatHeader contact={currentContact} />
+                  <ChatHeader contact={currentContact} isWebSocketConnected={isConnected && !!selectedSession} onReconnect={connect} />
                   <ChatWindow
                     messages={messages}
                     loading={messagesLoading}
