@@ -1,12 +1,10 @@
 import { cookies } from "next/headers";
 import type { Metadata } from "next";
-
 import "./globals.css";
-
 import { cn } from "@/lib/utils";
-
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ActiveThemeProvider } from "@/components/active-theme";
+import { Toaster } from "sonner"; // 👈 Importamos Toaster
 
 export const metadata: Metadata = {
   title: "Orcish Dashboard",
@@ -43,6 +41,13 @@ export default async function RootLayout({
             {children}
           </ActiveThemeProvider>
         </ThemeProvider>
+
+        {/* ✅ Toaster de Sonner: una sola vez en toda la app */}
+        <Toaster
+          richColors
+          position="top-right"
+          duration={5000} // 5 segundos, como tú prefieres
+        />
       </body>
     </html>
   );
