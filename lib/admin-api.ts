@@ -17,6 +17,7 @@ import {
   UpdateContactRequest,
   ContactMessage,
   Course,
+  CreateCourseRequest,
   UpdateCourseRequest,
   LearningContent,
   CreateLearningContentRequest,
@@ -297,30 +298,47 @@ export const contactsApi = {
 
 // Course Management API
 export const coursesApi = {
-  sync: (): Promise<void> =>
+  sync: (): Promise<{ message: string; sincronizados: number; nuevos: number; actualizados: number; inactivados: number }> =>
     apiRequest('/api/v1/curso/sincronizar', {
       method: 'POST',
     }),
 
-  list: (): Promise<Course[]> =>
-    apiRequest('/api/v1/curso'),
+  list: (estado?: string): Promise<Course[]> => {
+    const params = estado ? `?estado=${estado}` : '';
+    return apiRequest(`/api/v1/curso${params}`);
+  },
 
-  get: (courseId: string): Promise<Course> =>
+  get: (courseId: number): Promise<Course> =>
     apiRequest(`/api/v1/curso/${courseId}`),
 
-  update: (courseId: string, data: UpdateCourseRequest): Promise<Course> =>
+  create: (data: CreateCourseRequest): Promise<Course> =>
+    apiRequest('/api/v1/curso', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  update: (courseId: number, data: UpdateCourseRequest): Promise<Course> =>
     apiRequest(`/api/v1/curso/${courseId}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     }),
 
-  delete: (courseId: string): Promise<void> =>
+  patch: (courseId: number, data: Partial<UpdateCourseRequest>): Promise<Course> =>
+    apiRequest(`/api/v1/curso/${courseId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
+
+  delete: (courseId: number): Promise<{ message: string }> =>
     apiRequest(`/api/v1/curso/${courseId}`, {
       method: 'DELETE',
     }),
 
   getActive: (): Promise<Course[]> =>
     apiRequest('/api/v1/curso/estado/activo'),
+
+  getByEstado: (estado: 'activo' | 'inactivo'): Promise<Course[]> =>
+    apiRequest(`/api/v1/curso/estado/${estado}`),
 };
 
 // Learning Content API

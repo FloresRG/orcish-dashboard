@@ -19,6 +19,31 @@ export interface CreateUserRequest {
   isActive: boolean;
 }
 
+export interface CreateCourseRequest {
+  fullname: string;
+  shortname: string;
+  descripcion: string;
+  carga_horaria: number;
+  fecha_inicio: string;
+  fecha_limite_inscripcion: string;
+  banner: string;
+  celular_referencia: string;
+  inversion: number;
+  descuento: number;
+  pdf?: string;
+  pago_qr?: string;
+  pago_qr_descuento?: string;
+  link_formulario?: string;
+  dias?: string[];
+  sesiones?: string[];
+  horarios?: string[];
+  fecha_inicio_descuento?: string;
+  fecha_fin_descuento?: string;
+  links_pdf?: string;
+  duracion_del_curso?: string;
+  estado?: 'activo' | 'inactivo';
+}
+
 export interface UpdateUserRequest {
   name?: string;
   role?: 'admin' | 'usuario' | 'invitado';
@@ -150,21 +175,58 @@ export interface ContactMessage {
 
 // Course Management Types
 export interface Course {
-  id: string;
+  id: number;
   fullname: string;
   shortname: string;
-  idnumber: string;
-  summary: string;
-  descripcion?: string;
-  estado: string;
-  createdAt: string;
-  updatedAt: string;
+  idnumber?: string;
+  summary?: string;
+  descripcion: string;
+  carga_horaria: number;
+  fecha_inicio: string;
+  fecha_limite_inscripcion: string;
+  banner: string;
+  pdf?: string;
+  celular_referencia: string;
+  inversion: number;
+  descuento: number;
+  fecha_inicio_descuento?: string;
+  fecha_fin_descuento?: string;
+  pago_qr?: string;
+  pago_qr_descuento?: string;
+  link_formulario?: string;
+  dias?: string[];
+  sesiones?: string[];
+  horarios?: string[];
+  links_pdf?: string;
+  duracion_del_curso?: string;
+  estado: 'activo' | 'inactivo';
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface UpdateCourseRequest {
   fullname?: string;
+  shortname?: string;
   descripcion?: string;
-  estado?: string;
+  carga_horaria?: number;
+  inversion?: number;
+  descuento?: number;
+  fecha_inicio?: string;
+  fecha_limite_inscripcion?: string;
+  banner?: string;
+  pdf?: string;
+  celular_referencia?: string;
+  pago_qr?: string;
+  pago_qr_descuento?: string;
+  link_formulario?: string;
+  dias?: string[];
+  sesiones?: string[];
+  horarios?: string[];
+  fecha_inicio_descuento?: string;
+  fecha_fin_descuento?: string;
+  links_pdf?: string;
+  duracion_del_curso?: string;
+  estado?: 'activo' | 'inactivo';
 }
 
 // Learning Content Types

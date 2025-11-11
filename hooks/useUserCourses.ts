@@ -1,18 +1,7 @@
 // hooks/useUserCourses.ts
 import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
-
-interface Course {
-  id: string;
-  fullname: string;
-  shortname: string;
-  idnumber: string;
-  summary: string;
-  descripcion?: string;
-  estado: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { Course } from '@/types/admin';
 
 export const useUserCourses = () => {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -21,10 +10,11 @@ export const useUserCourses = () => {
   const getAuthToken = () => localStorage.getItem('auth_token');
   const getApiUrl = (endpoint: string) => `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000'}${endpoint}`;
 
-  const loadCourses = useCallback(async () => {
+  const loadCourses = useCallback(async (estado?: string) => {
     try {
       setLoading(true);
-      const response = await fetch(getApiUrl('/api/v1/curso'), {
+      const params = estado ? `?estado=${estado}` : '';
+      const response = await fetch(getApiUrl(`/api/v1/curso${params}`), {
         headers: {
           'Authorization': `Bearer ${getAuthToken()}`,
         },
@@ -45,7 +35,7 @@ export const useUserCourses = () => {
     }
   }, []);
 
-  const getCourse = useCallback(async (courseId: string) => {
+  const getCourse = useCallback(async (courseId: number) => {
     try {
       const response = await fetch(getApiUrl(`/api/v1/curso/${courseId}`), {
         headers: {
@@ -85,11 +75,33 @@ export const useUserCourses = () => {
     }
   }, []);
 
+  const getCoursesByEstado = useCallback(async (estado: 'activo' | 'inactivo') => {
+    try {
+      const response = await fetch(getApiUrl(`/api/v1/curso/estado/${estado}`), {
+        headers: {
+          'Authorization': `Bearer ${getAuthToken()}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to load ${estado} courses`);
+      }
+
+      const data = await response.json();
+      setCourses(data);
+      return data;
+    } catch (error) {
+      toast.error(`Failed to load ${estado} courses`);
+      throw error;
+    }
+  }, []);
+
   return {
     courses,
     loading,
     loadCourses,
     getCourse,
     getActiveCourses,
+    getCoursesByEstado,
   };
 };
