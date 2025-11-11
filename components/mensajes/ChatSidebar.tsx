@@ -107,21 +107,25 @@ export function ChatSidebar({
         <div className="grid gap-1 p-2">
           {contacts.map((contact) => (
             <button
-              key={contact.id_contac}
-              onClick={() => onContactSelect(contact)}
+              key={contact.id_contac || contact.id}
+              onClick={() => {
+                console.log('👆 ChatSidebar: Contact clicked:', contact.nombre_completo || contact.name, contact.id_contac || contact.id);
+                console.log('📋 Full contact object:', contact);
+                onContactSelect(contact);
+              }}
               className={`flex items-center gap-3 rounded-lg p-3 text-left transition-colors hover:bg-muted ${
-                selectedContactId === contact.id_contac ? 'bg-muted' : ''
+                selectedContactId === (contact.id_contac || contact.id) ? 'bg-muted' : ''
               }`}
             >
               <Avatar className="h-12 w-12">
                 <AvatarImage src="/placeholder-user.jpg" alt={contact.nombre_completo} />
                 <AvatarFallback>
-                  {contact.nombre_completo?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
+                  {(contact.nombre_completo || contact.name || 'U').split(' ').map(n => n[0]).join('').toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <div className="font-medium truncate">{contact.nombre_completo}</div>
+                  <div className="font-medium truncate">{contact.nombre_completo || contact.name}</div>
                   <div className="flex items-center gap-1">
                     {contact.estado && (
                       <Badge variant={

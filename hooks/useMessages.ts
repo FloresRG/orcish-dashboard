@@ -30,6 +30,7 @@ export const useMessages = (sessionId: string | null, contactId: string | null) 
   const loadMessages = useCallback(async (page = 1, append = false) => {
     if (!sessionId || !contactId) {
       console.log('⚠️ useMessages: Missing sessionId or contactId, skipping load');
+      console.log('   sessionId:', sessionId, 'contactId:', contactId);
       return;
     }
 
@@ -99,7 +100,7 @@ export const useMessages = (sessionId: string | null, contactId: string | null) 
   }, [sessionId, contactId]);
 
   const addIncomingMessage = useCallback((message: Message) => {
-    console.log('📨 useMessages: Adding incoming message:', message.id, message.content.substring(0, 50));
+    console.log('📨 useMessages: Adding incoming message:', message.id, message.content?.substring(0, 50) || 'No content');
     setMessages(prev => [...prev, message]);
   }, []);
 

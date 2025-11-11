@@ -3,9 +3,10 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
 
 export interface Contact {
-  id_contac: string;
-  name?: string | null;
-  nombre_completo: string;
+  id?: string; // ID real del backend
+  id_contac?: string; // ID alternativo para compatibilidad
+  name?: string | null; // Nombre del backend
+  nombre_completo?: string; // Nombre alternativo para compatibilidad
   phone?: string | null;
   estado?: 'frio' | 'tibio' | 'caliente' | null;
   ia?: boolean | null;
@@ -32,6 +33,7 @@ export interface Message {
   isReceived: boolean;
   type: string;
   tipo_mensaje?: string;
+  isAI?: boolean;
 }
 
 export interface PaginationInfo {

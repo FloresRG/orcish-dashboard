@@ -65,7 +65,10 @@ export default function MensajesPage() {
     loadMoreMessages,
     sendMessage: sendMessageHook,
     addIncomingMessage,
-  } = useMessages(selectedSession?.id || null, selectedContact?.id || null);
+  } = useMessages(selectedSession?.id || null, selectedContact?.id_contac || selectedContact?.id || null);
+
+  console.log('🔍 MensajesPage: Hook values - sessionId:', selectedSession?.id, 'contactId:', selectedContact?.id_contac || selectedContact?.id);
+  console.log('📨 MensajesPage: Messages count:', messages.length, 'loading:', messagesLoading, 'error:', messagesError);
 
   // Handle WebSocket messages - Using new service
   useEffect(() => {
@@ -100,8 +103,8 @@ export default function MensajesPage() {
       refetchContacts();
     };
 
-    const handleOutgoingMessage = (data?: { sessionId?: string; message?: string; timestamp?: number }) => {
-      console.log('🤖 MensajesPage: Outgoing message:', data);
+    const handleOutgoingMessage = (data?: { sessionId?: string; message?: string | { text?: string; content?: string }; timestamp?: number; phoneNumber?: string }) => {
+      console.log('📤 MensajesPage: Outgoing message:', data);
 
       if (!data) return;
 
@@ -111,9 +114,14 @@ export default function MensajesPage() {
         return;
       }
 
+      // Extract content from message object or string
+      const content = typeof data.message === 'string'
+        ? data.message
+        : data.message?.content || data.message?.text || '';
+
       const newMessage: Message = {
         id: Date.now().toString(),
-        content: data.message || '',
+        content: content,
         timestamp: data.timestamp ? new Date(data.timestamp).toISOString() : new Date().toISOString(),
         isSent: true,
         isReceived: false,
@@ -121,6 +129,41 @@ export default function MensajesPage() {
         tipo_mensaje: 'espera',
       };
       addIncomingMessage(newMessage);
+    };
+
+    const handleIAResponse = (data?: { sessionId?: string; message?: string | { text?: string; content?: string }; timestamp?: number; phoneNumber?: string; contactId?: string; isAI?: boolean }) => {
+      console.log('🤖 MensajesPage: IA Response:', data);
+
+      if (!data) return;
+
+      // Check if this message belongs to the current session
+      if (data.sessionId !== selectedSession?.id) {
+        console.log('📨 MensajesPage: Ignoring IA response from different session:', data.sessionId);
+        return;
+      }
+
+      // Extract content from message object or string
+      const content = typeof data.message === 'string'
+        ? data.message
+        : data.message?.content || data.message?.text || '';
+
+      const newMessage: Message = {
+        id: Date.now().toString(),
+        content: content,
+        timestamp: data.timestamp ? new Date(data.timestamp).toISOString() : new Date().toISOString(),
+        isSent: true,
+        isReceived: false,
+        type: 'ia_response',
+        tipo_mensaje: 'espera',
+        isAI: true,
+      };
+      addIncomingMessage(newMessage);
+
+      // Play sound notification for IA responses too
+      playIncomingMessageSound();
+
+      // Refresh contacts to update last message
+      refetchContacts();
     };
 
     const playIncomingMessageSound = () => {
@@ -136,11 +179,13 @@ export default function MensajesPage() {
 
     webSocketService.on('message_incoming', handleIncomingMessage);
     webSocketService.on('message_outgoing', handleOutgoingMessage);
+    webSocketService.on('ia_response', handleIAResponse);
 
     return () => {
       console.log('🔌 MensajesPage: Cleaning up WebSocket message handler');
       webSocketService.off('message_incoming', handleIncomingMessage);
       webSocketService.off('message_outgoing', handleOutgoingMessage);
+      webSocketService.off('ia_response', handleIAResponse);
     };
   }, [selectedSession?.id, addIncomingMessage, refetchContacts]);
 
@@ -177,7 +222,8 @@ export default function MensajesPage() {
 
   // Handle contact selection
   const handleContactSelect = (contact: Contact) => {
-    console.log('👆 MensajesPage: Contact selected:', contact.name, contact.id);
+    console.log('👆 MensajesPage: Contact selected:', contact.nombre_completo || contact.name, contact.id_contac);
+    console.log('📋 Contact object:', contact);
     setSelectedContact(contact);
   };
 
@@ -277,7 +323,7 @@ export default function MensajesPage() {
                     searchTerm={searchTerm}
                     onSearchChange={setSearchTerm}
                     onContactSelect={handleContactSelect}
-                    selectedContactId={selectedContact?.id || null}
+                    selectedContactId={selectedContact?.id_contac || selectedContact?.id || null}
                     sessionId={selectedSession?.id}
                   />
 
@@ -322,7 +368,7 @@ export default function MensajesPage() {
                   searchTerm={searchTerm}
                   onSearchChange={setSearchTerm}
                   onContactSelect={handleContactSelect}
-                  selectedContactId={selectedContact?.id || null}
+                  selectedContactId={selectedContact?.id_contac || selectedContact?.id || null}
                   sessionId={selectedSession?.id}
                 />
 

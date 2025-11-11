@@ -2,11 +2,12 @@
 import { io, Socket } from 'socket.io-client';
 
 export interface WebSocketMessage {
-  type: 'incoming' | 'outgoing';
+  type: 'incoming' | 'outgoing' | 'ia_response';
   data?: {
-    message: {
+    message?: {
       id: string;
       content: string;
+      text?: string;
       timestamp: string;
       isSent: boolean;
       isReceived: boolean;
@@ -14,9 +15,13 @@ export interface WebSocketMessage {
       shouldTriggerAI?: boolean;
     };
     contactId?: string;
+    isGroup?: boolean;
+    sessionUserId?: string;
+    type?: string;
   };
   phoneNumber?: string;
   message?: string;
+  content?: string;
   timestamp?: string;
   sessionId?: string;
 }
@@ -27,6 +32,9 @@ interface WebSocketEventData {
   message?: string;
   timestamp?: number;
   latency?: number;
+  phoneNumber?: string;
+  contactId?: string;
+  isAI?: boolean;
 }
 
 type WebSocketEventCallback = (data?: WebSocketEventData) => void;
@@ -178,21 +186,43 @@ class WebSocketService {
   private handleMessage(message: WebSocketMessage): void {
     console.log('📨 Mensaje WebSocket recibido:', message);
 
+    // Normalizar el contenido del mensaje
+    const messageContent = message.data?.message?.content ||
+                          message.data?.message?.text ||
+                          message.message ||
+                          message.content ||
+                          '';
+
     switch (message.type) {
       case 'incoming':
         console.log('📥 Mensaje entrante desde WhatsApp');
         this.emit('message_incoming', {
           sessionId: message.sessionId,
-          message: message.data?.message.content,
-          timestamp: message.data?.message.timestamp ? new Date(message.data.message.timestamp).getTime() : undefined
+          message: messageContent,
+          timestamp: message.timestamp ? new Date(message.timestamp).getTime() : undefined,
+          phoneNumber: message.phoneNumber,
+          contactId: message.data?.contactId
         });
         break;
       case 'outgoing':
         console.log('📤 Mensaje saliente enviado');
         this.emit('message_outgoing', {
           sessionId: message.sessionId,
-          message: message.data?.message.content,
-          timestamp: message.data?.message.timestamp ? new Date(message.data.message.timestamp).getTime() : undefined
+          message: messageContent,
+          timestamp: message.timestamp ? new Date(message.timestamp).getTime() : undefined,
+          phoneNumber: message.phoneNumber,
+          contactId: message.data?.contactId
+        });
+        break;
+      case 'ia_response':
+        console.log('🤖 Respuesta de IA recibida:', messageContent);
+        this.emit('ia_response', {
+          sessionId: message.sessionId,
+          message: messageContent,
+          timestamp: message.timestamp ? new Date(message.timestamp).getTime() : undefined,
+          phoneNumber: message.phoneNumber,
+          contactId: message.data?.contactId,
+          isAI: true
         });
         break;
       default:
